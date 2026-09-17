@@ -2,14 +2,37 @@
 name: Release
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 permissions:
   contents: write
+  issues: write
+
 
 jobs:
-  release:
-    uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@v1
+  run-tests:
+    if: github.head_ref == 'dev'
+    uses: FlorianSchw/package-workflows/.github/workflows/R-CMD-Check.yml@main
     secrets:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  on-success:
+    needs: run-tests
+    if: needs.run-tests.result == 'success'
+    uses: FlorianSchw/package-workflows/.github/workflows/merge-pull-request.yml@main
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+
+  on-failure:
+    needs: run-tests
+    if: needs.run-tests.result == 'failure'
+    uses: FlorianSchw/package-workflows/.github/workflows/create-issue.yml@main
+    with:
+      pr_author: ${{ github.event.pull_request.user.login }}
+      run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  release:
+    needs: on-success
+    if: needs.on-success.result == 'success'
+    uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@main
