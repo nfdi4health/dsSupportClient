@@ -1,0 +1,12 @@
+# .github/workflows/release.yml in the package repo
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@v1
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
