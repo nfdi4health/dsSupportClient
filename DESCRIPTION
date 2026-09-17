@@ -1,7 +1,7 @@
 Package: dsSupportClient
 Type: Package
 Title: DataSHIELD descriptive functions
-Version: 0.1.0
+Version: 1.1.0
 Authors@R: c(
     person("Sofia", "Siampani", email = "SofiaMaria.Siampani@mdc-berlin.de", role = c("aut", "cre")),
     person("Florian", "Schwarz", email = "Florian.Schwarz@dife.de", role = "aut", comment = c(ORCID = "0000-0002-1088-4773")))
