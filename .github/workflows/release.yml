@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   release:
     uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@v1
