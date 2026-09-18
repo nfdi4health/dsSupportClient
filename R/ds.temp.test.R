@@ -16,10 +16,7 @@ ds.temp.test<- function(datasources = NULL, method = "deterministic" ) {
   #### and another one
   #### yep another
 
-  ####
-
-  ####S
-
+  #### new test
 
   #####asdasd
 
