@@ -27,4 +27,7 @@ ds.temp.test<- function(datasources = NULL, method = "deterministic" ) {
 
   #### another test
 
+
+  a <- 5L
+
 }
