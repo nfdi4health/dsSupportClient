@@ -15,3 +15,5 @@ jobs:
     with:
       scan-mode: all
       anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
+      datashield: true
+      datashield-type: client

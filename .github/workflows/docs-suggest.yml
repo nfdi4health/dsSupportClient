@@ -14,3 +14,5 @@ jobs:
     uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
     with:
       anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
+      datashield: true
+      datashield-type: client
