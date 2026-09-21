@@ -22,6 +22,8 @@
 #'
 #'
 #'
+#'
+#'
 #' # loading necessary packages
 #' require("DSI")
 #' require("DSOpal")
