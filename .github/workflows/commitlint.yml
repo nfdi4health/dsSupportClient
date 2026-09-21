@@ -1,4 +1,4 @@
-name: Commitlint Test
+name: Commitlint
 
 on:
   pull_request:
