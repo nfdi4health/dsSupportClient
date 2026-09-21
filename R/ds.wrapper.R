@@ -6,6 +6,7 @@
 #' @param datasources A list of DSConnection-class objects obtained after login. If not specified, the default set of connections is used, as returned by datashield.connections_default.
 #' @param save Logical; if TRUE the resulting summary table is written to a CSV file in the current working directory. Defaults to FALSE.
 #' @return A data.frame summarising the output of ds_function for each variable (rows) and each connected study (columns), returned invisibly as an ordinary R object; if save = TRUE this same table is also written to a CSV file in the working directory. As the function only aggregates results already permitted by DataSHIELD's disclosure controls, no additional disclosure filtering is applied by ds.wrapper itself.
+#' @author Sofia Siampani (Max-Delbrueck-Center, Berlin), Florian Schwarz (German Institute of Human Nutrition, Potsdam-Rehbruecke)
 #' @import dplyr
 #' @import purrr
 #' @importFrom utils write.csv
