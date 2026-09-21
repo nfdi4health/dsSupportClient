@@ -20,6 +20,7 @@
 #' # Version 1.0
 #' # Connecting to Opal Servers
 #'
+#'
 #' # loading necessary packages
 #' require("DSI")
 #' require("DSOpal")
