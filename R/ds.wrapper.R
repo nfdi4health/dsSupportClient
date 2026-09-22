@@ -22,6 +22,7 @@
 #'
 #'
 #'
+#'
 #' builder <- DSI::newDSLoginBuilder()
 #' builder$append(server = "study1",
 #'                url = "https://opal-demo.obiba.org/",
