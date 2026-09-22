@@ -17,3 +17,6 @@ jobs:
       anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
       datashield: true
       datashield-type: client
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
