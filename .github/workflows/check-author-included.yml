@@ -8,6 +8,10 @@ on:
 jobs:
   check-authors:
     permissions:
+      id-token: write
       contents: write
       pull-requests: write
     uses: FlorianSchw/package-workflows/.github/workflows/check-description-authors.yml@main
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
