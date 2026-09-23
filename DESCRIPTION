@@ -3,8 +3,11 @@ Type: Package
 Title: DataSHIELD descriptive functions
 Version: 1.1.0
 Authors@R: c(
-    person("Sofia", "Siampani", email = "SofiaMaria.Siampani@mdc-berlin.de", role = c("aut", "cre")),
-    person("Florian", "Schwarz", email = "Florian.Schwarz@dife.de", role = "aut", comment = c(ORCID = "0000-0002-1088-4773")))
+    person("Sofia", "Siampani", , "SofiaMaria.Siampani@mdc-berlin.de", role = c("aut", "cre")),
+    person("Florian", "Schwarz", , "Florian.Schwarz@dife.de", role = "aut",
+           comment = c(ORCID = "0000-0002-1088-4773")),
+    person("FlorianSchw", role = "aut")
+  )
 License: GPL-3
 Description: This package adds some convenience for analysts running DataSHIELD aggregate functions.
 Encoding: UTF-8
