@@ -5,32 +5,17 @@
 #' @param ds_function The DataSHIELD client aggregate function (e.g. ds.class, ds.numNA) to apply to each variable in df; passed as a function object, not a string.
 #' @param datasources A list of DSConnection-class objects obtained after login. If not specified, the default set of connections is used, as returned by datashield.connections_find.
 #' @param save Logical; if TRUE the resulting summary table is written to a CSV file in the current working directory. Defaults to FALSE.
+#' @author Sofia Siampani (Max-Delbrueck-Center, Berlin), Florian Schwarz (German Institute of Human Nutrition, Potsdam-Rehbruecke)
 #' @return A data.frame is returned to the caller, with one row per variable in df and one column per connected study, holding the per-variable, per-study output of ds_function; if save = TRUE the same table is also written to a CSV file in the working directory. Since the table only combines results already returned by the disclosure-controlled ds_function calls, ds.wrapper applies no additional filtering itself.
 #' @import dplyr
 #' @import purrr
 #' @importFrom utils write.csv
 #' @examples
 #' \dontrun{
-#'
-#'
-#'
-#'
-#'
-#
-#' @title Apply a DataSHIELD function across all variables in a table
-#' @description Runs a specified aggregate-type DataSHIELD client function on every column of a server-side data frame across one or more studies. Returns a combined summary table of the per-variable, per-study results.
-#' @details For each connection in datasources, the function retrieves the column names of df via dsBaseClient::ds.colnames(), then calls the supplied ds_function once per variable (as df$variable), collecting the first returned element into a data.frame. Per-study results are merged column-wise using dplyr::full_join() (via purrr::reduce()), keyed on variable name, into a single summary data.frame. Optionally writes this summary to a CSV file with utils::write.csv().
-#' @param df Character string naming the server-side data.frame (or table already assigned in the DataSHIELD session) whose variables will be processed; defaults to "D".
-#' @param ds_function The DataSHIELD client-side aggregate function to apply to each variable (passed as a function object, e.g. ds.class or ds.numNA, not as a string); must be supplied.
-#' @param datasources Optional list of DSConnection-class objects representing the server connections to use; if NULL, the function uses DSI::datashield.connections_find() to find connections in the current session.
-#' @param save Logical indicating whether to write the resulting summary table to a CSV file in the working directory in addition to returning it; defaults to FALSE.
-#' @return Returns a data.frame to the caller, with one row per variable in df and one column per study named "study.functionname", holding the value returned by ds_function for that variable and study; if save = TRUE this data.frame is also written to a CSV file in the current working directory as a side effect.
-#' @examples
-#' \dontrun{
 #' require('DSI')
 #' require('DSOpal')
 #' require('dsSupportClient')
-#' 
+#'
 #' builder <- DSI::newDSLoginBuilder()
 #' builder$append(server = "study1",
 #'                url = "https://opal-demo.obiba.org/",
@@ -46,13 +31,13 @@
 #'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
 #' logindata <- builder$build()
 #' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
-#' 
+#'
 #' # Retrieving information on variable classes in the specified data.frame
 #' ds.wrapper(df = "D", ds_function = ds.class)
-#' 
+#'
 #' # Retrieving information on how many NAs are present in each variable
 #' ds.wrapper(df = "D", ds_function = ds.numNA)
-#' 
+#'
 #' datashield.logout(connections)
 #' }
 #' @export
