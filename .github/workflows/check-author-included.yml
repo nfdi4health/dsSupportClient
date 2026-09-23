@@ -1,0 +1,17 @@
+name: Check DESCRIPTION Authors
+
+on:
+  pull_request:
+    branches: [dev]
+    paths: ['R/**']
+
+concurrency:
+  group: suggestion-commits-${{ github.head_ref }}
+  cancel-in-progress: false
+
+jobs:
+  check-authors:
+    uses: FlorianSchw/package-workflows/.github/workflows/check-description-authors.yml@main
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
