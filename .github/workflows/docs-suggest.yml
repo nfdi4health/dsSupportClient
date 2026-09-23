@@ -5,6 +5,10 @@ on:
     branches: [dev]
     paths: ['R/**']
 
+concurrency:
+  group: suggestion-commits-${{ github.head_ref }}
+  cancel-in-progress: false
+
 jobs:
   suggest-docs:
     permissions:
