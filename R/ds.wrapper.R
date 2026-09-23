@@ -11,10 +11,16 @@
 #' @importFrom utils write.csv
 #' @examples
 #' \dontrun{
+#'
+#'
+#'
+#'
+#'
+#
 #' require('DSI')
 #' require('DSOpal')
 #' require('dsSupportClient')
-#' 
+#'
 #' builder <- DSI::newDSLoginBuilder()
 #' builder$append(server = "study1",
 #'                url = "https://opal-demo.obiba.org/",
@@ -30,13 +36,13 @@
 #'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
 #' logindata <- builder$build()
 #' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
-#' 
+#'
 #' # Retrieving information on variable classes in the specified data.frame
 #' ds.wrapper(df = "D", ds_function = ds.class)
-#' 
+#'
 #' # Retrieving information on how many NAs are present in each variable
 #' ds.wrapper(df = "D", ds_function = ds.numNA)
-#' 
+#'
 #' datashield.logout(connections)
 #' }
 #' @export
