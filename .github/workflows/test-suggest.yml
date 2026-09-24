@@ -1,10 +1,12 @@
-name: Test setup suggestions (PR)
+name: Test setup suggestions
 
 on:
   pull_request:
     branches: [dev]
     paths: ['R/**']
-
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
 
 jobs:
   suggest-docs:
@@ -15,6 +17,7 @@ jobs:
       issues: write
     uses: FlorianSchw/package-workflows/.github/workflows/test-coverage-suggest.yml@main
     with:
+      scan-mode: ${{ github.event_name == 'pull_request' && 'changed' || 'all' }}
       datashield: true
       datashield-type: client
     secrets:
