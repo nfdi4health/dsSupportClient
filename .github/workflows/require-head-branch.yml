@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  require-head-branch:
     uses: FlorianSchw/package-workflows/.github/workflows/require-head-branch.yml@main
     with:
       allowed-head: 'dev'
