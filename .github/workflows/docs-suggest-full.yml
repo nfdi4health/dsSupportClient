@@ -1,0 +1,22 @@
+name: Roxygen Doc Suggestions (Monthly Sweep)
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+jobs:
+  suggest-docs:
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+    uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
+    with:
+      scan-mode: all
+      anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
+      datashield: true
+      datashield-type: client
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

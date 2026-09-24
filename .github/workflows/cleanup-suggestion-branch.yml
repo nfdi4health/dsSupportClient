@@ -1,0 +1,12 @@
+name: Cleanup Suggestion Branch
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: FlorianSchw/package-workflows/.github/workflows/cleanup-suggestion-branch.yml@main

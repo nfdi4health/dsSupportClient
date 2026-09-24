@@ -1,0 +1,23 @@
+name: Test setup suggestions (PR)
+
+on:
+  pull_request:
+    branches: [dev]
+    paths: ['R/**']
+
+
+jobs:
+  suggest-docs:
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: FlorianSchw/package-workflows/.github/workflows/test-coverage-suggest.yml@main
+    with:
+      anthropic-federation-rule-id: fdrl_01EMhCDLvmYeEyTG7h4VqhxQ # needs adaptation claude console
+      datashield: true
+      datashield-type: client
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

@@ -8,25 +8,26 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 
 jobs:
-  run-tests:
+  check:
     if: github.head_ref == 'dev'
     uses: FlorianSchw/package-workflows/.github/workflows/R-CMD-Check.yml@main
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   on-success:
-    needs: run-tests
-    if: needs.run-tests.result == 'success'
+    needs: check
+    if: needs.check.result == 'success'
     uses: FlorianSchw/package-workflows/.github/workflows/merge-pull-request.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number }}
 
   on-failure:
-    needs: run-tests
-    if: needs.run-tests.result == 'failure'
+    needs: check
+    if: needs.check.result == 'failure'
     uses: FlorianSchw/package-workflows/.github/workflows/create-issue.yml@main
     with:
       pr_author: ${{ github.event.pull_request.user.login }}
