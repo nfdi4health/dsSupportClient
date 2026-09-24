@@ -1,0 +1,11 @@
+name: Require Head Branch
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    uses: FlorianSchw/package-workflows/.github/workflows/require-head-branch.yml@main
+    with:
+      allowed-head: 'dev'
