@@ -1,4 +1,4 @@
-name: Roxygen Doc Suggestions (PR)
+name: Test setup suggestions (PR)
 
 on:
   pull_request:
@@ -12,9 +12,10 @@ jobs:
       id-token: write
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
+      issues: write
+    uses: FlorianSchw/package-workflows/.github/workflows/test-coverage-suggest.yml@main
     with:
-      anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
+      anthropic-federation-rule-id: fdrl_01EMhCDLvmYeEyTG7h4VqhxQ # needs adaptation claude console
       datashield: true
       datashield-type: client
     secrets:
