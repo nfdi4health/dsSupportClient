@@ -1,10 +1,12 @@
-name: Roxygen Doc Suggestions (PR)
+name: Roxygen Doc Suggestions
 
 on:
   pull_request:
     branches: [dev]
     paths: ['R/**']
-
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
 
 jobs:
   suggest-docs:
@@ -14,9 +16,12 @@ jobs:
       pull-requests: write
     uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
     with:
-      anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
+      scan-mode: ${{ github.event_name == 'pull_request' && 'changed' || 'all' }}
       datashield: true
       datashield-type: client
     secrets:
+      anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
+      anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
+      anthropic-federation-rule-id: ${{ secrets.ANTHROPIC_FDRL_ROXYGEN }}
       app-id: ${{ secrets.APP_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
