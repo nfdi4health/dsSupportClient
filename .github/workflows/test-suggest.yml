@@ -19,5 +19,8 @@ jobs:
       datashield: true
       datashield-type: client
     secrets:
+      anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
+      anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
+      anthropic-federation-rule-id: ${{ secrets.ANTHROPIC_FDRL_ROXYGEN }}
       app-id: ${{ secrets.APP_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

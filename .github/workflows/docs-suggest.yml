@@ -14,9 +14,11 @@ jobs:
       pull-requests: write
     uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
     with:
-      anthropic-federation-rule-id: fdrl_01XXW9s2iFKveZyKKizcggit
       datashield: true
       datashield-type: client
     secrets:
+      anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
+      anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
+      anthropic-federation-rule-id: ${{ secrets.ANTHROPIC_FDRL_ROXYGEN }}   # _TESTS for test-coverage-suggest
       app-id: ${{ secrets.APP_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
