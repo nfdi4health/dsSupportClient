@@ -1,0 +1,16 @@
+name: Publish Release
+
+on:
+  repository_dispatch:
+    types: [release-publish]
+
+jobs:
+  release:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@main
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
