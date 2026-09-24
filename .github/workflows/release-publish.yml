@@ -11,6 +11,8 @@ jobs:
       issues: write
       pull-requests: write
     uses: FlorianSchw/package-workflows/.github/workflows/package-release.yml@main
+    with:
+      dry-run: true   # TODO: remove before the first real release
     secrets:
       app-id: ${{ secrets.APP_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
