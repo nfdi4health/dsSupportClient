@@ -26,3 +26,9 @@ jobs:
       anthropic-federation-rule-id: ${{ secrets.ANTHROPIC_FDRL_TESTS }}
       app-id: ${{ secrets.APP_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+  keepalive:
+    if: github.event_name == 'schedule'
+    permissions:
+      actions: write
+    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@main

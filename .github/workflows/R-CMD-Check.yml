@@ -18,10 +18,8 @@ jobs:
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  workflow-keepalive:
+  keepalive:
     if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
     permissions:
       actions: write
-    steps:
-      - uses: liskin/gh-workflow-keepalive@v1
+    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@main
