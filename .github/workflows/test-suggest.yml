@@ -15,7 +15,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    uses: FlorianSchw/package-workflows/.github/workflows/test-coverage-suggest.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/test-suggest.yml@main
     with:
       scan-mode: ${{ github.event_name == 'pull_request' && 'changed' || 'all' }}
       datashield: true
