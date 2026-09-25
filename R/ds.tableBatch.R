@@ -1,12 +1,38 @@
-#'
 #' @title Table function for categorical data
-#' @param datasources An opal connection
-#' @param df specifies the  df that was assigned in the login, default is "D"
-#' @return runs the datashield function ds.table on all categorical variables of all studies and outputs a table with the outcome
-#' @export
+#' @description Builds a table of counts (with NAs) for every factor variable in a server-side data frame, across all connected studies.
+#' @details Uses ds.class (via an internal wrapper) to identify factor variables in the server-side data frame, then for each one calls ds.numNA and ds.length to skip variables that are entirely missing, and finally calls ds.table with useNA = "always" to tabulate. Server function called: ds.table (from dsBaseClient), with supporting calls to ds.class, ds.numNA, and ds.length. Results for each variable are combined into a single data.frame using dplyr::bind_rows.
+#' @param df String giving the name of the server-side data frame or table (as assigned during login/assign, e.g. "D") whose factor variables will be tabulated; defaults to "D".
+#' @param datasources A list of DSConnection-class objects, as returned by DSI::datashield.login(); if NULL (the default), the function uses DSI::datashield.connections_find() to locate existing connections.
+#' @return Returns a data.frame (built with dplyr::bind_rows) with one row block per categorical variable, containing the cross-tabulated counts (including NA counts) across studies as computed by ds.table; variables that are entirely missing across all studies are silently omitted from the result.
 #' @import dplyr
 #' @import dsBaseClient
-#'
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.tableBatch(df = "D", datasources = connections)
+#' 
+#' datashield.logout(connections)
+#' }
+#' @export
 
 ds.tableBatch <- function(df = "D", datasources = NULL){
 

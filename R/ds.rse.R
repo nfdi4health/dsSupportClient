@@ -1,16 +1,43 @@
-#' Robust Standard Errors HC1
-#'
+#' @title Robust Standard Errors HC1
+#' @description Fits a Gaussian GLM on server-side data via ds.glm and computes heteroskedasticity-consistent (HC1) robust standard errors, confidence intervals, and p-values, either separately per study or pooled across studies.
+#' @details Internally this builds a sequence of DataSHIELD calls (ds.glm, ds.dataFrame, ds.asDataMatrix, ds.matrixTranspose, ds.matrixMult, ds.matrixInvert, ds.matrixDiag, ds.rowColCalc, ds.mean, and related helpers) to reconstruct, without moving individual-level data off the server, the design matrix cross-products needed for the HC1 sandwich variance estimator. With type = "split" the whole HC1 calculation (including ds.glm) is repeated separately within each connection in datasources, returning one result per study; with type = "combine" a single ds.glm model is fitted across all datasources and the sandwich variance is assembled by pooling cross-product sums computed on each server. This is a fairly elaborate composite client function rather than a thin wrapper around one server-side aggregate/assign function.
 #' @param formula The formula to perform RSE e.g. "Age ~ Sex + Weight"
 #' @param datasources A list of \code{\link{DSConnection-class}} objects obtained after login.
 #' If the \code{datasources} argument is not specified the default set of connections will be
 #' used: see \code{\link{datashield.connections_default}}.
-#' @param type "split" or "combine"
-#' @param data A data.frame on the server-side
-#'
-#' @return robust standard errors of the formula
+#' @param type Character string, either "split" (default) to compute HC1 robust standard errors separately for each study in datasources, or "combine" to fit one model and pool the sandwich variance estimator across all studies.
+#' @param data A character string giving the name of the data frame (table) already assigned on the server(s), not a local R data.frame; used to build variable references such as data$var passed to server-side calls.
+#' @return If type = "split", a named list (one element per study, named after each DSConnection) of data.frames with columns Beta, Robust SE, Robust Z, Robust P, Robust LCI and Robust UCI, one row per model term. If type = "combine", a single such data.frame pooled across all datasources with an added Nvalid column; a timing message is also printed to the console in this case. No additional disclosure-control filtering is applied by this function itself beyond what the underlying ds.* calls already enforce.
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.rse(formula = "LAB_HDL ~ GENDER + PM_BMI_CONTINUOUS",
+#'        datasources = connections,
+#'        type = "combine",
+#'        data = "D")
+#' 
+#' datashield.logout(connections)
+#' }
 #' @export
-#'
-#'
 ds.rse <- function(formula, datasources, type = "split", data) {
 
 
