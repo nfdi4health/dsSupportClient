@@ -21,10 +21,10 @@ ds.tableBatch <- function(df = "D", datasources = NULL){
   }
 
 
-  classes <- ds.wrapper(df = df, ds_function = ds.class, datasources = datasources)
+  classes <- ds.wrapper(df = df, ds_function = "ds.class", datasources = datasources)
 
   classes <- classes %>%
-    dplyr::filter_all(all_vars("factor"))
+    dplyr::filter_all(all_vars(.=="factor"))
 
   variables <- rownames(classes)
 
