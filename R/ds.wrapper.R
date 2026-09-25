@@ -1,8 +1,8 @@
 #' @title Summarise a variable-level DataSHIELD function across variables
 #' @description Runs a variable-level DataSHIELD aggregate function (e.g. ds.class, ds.numNA) over every column of a server-side data.frame and collates the results into one table.
-#' @details This function loops over the column names of the server-side data.frame (obtained via dsBaseClient::ds.colnames) and applies the supplied aggregate function to each variable at each connected study, then combines the per-study results using dplyr::full_join via purrr::reduce. It does not call one fixed server-side function itself; instead it dispatches whichever DataSHIELD client aggregate function is passed in via ds_function (e.g. ds.class, ds.numNA), each of which issues its own server-side call.
+#' @details This function loops over the column names of the server-side data.frame (obtained via dsBaseClient::ds.colnames) and applies the named aggregate function to each variable at each connected study, then combines the per-study results using dplyr::full_join via purrr::reduce. It does not call one fixed server-side function itself; instead it looks up and dispatches whichever DataSHIELD client aggregate function is named in ds_function (e.g. "ds.class", "ds.numNA"), each of which issues its own server-side call.
 #' @param df String naming the server-side data.frame to summarise (must exist on each connected server); defaults to "D".
-#' @param ds_function The DataSHIELD client aggregate function (e.g. ds.class, ds.numNA) to apply to each variable in df; passed as a function object, not a string.
+#' @param ds_function String giving the name of the DataSHIELD client aggregate function (e.g. "ds.class", "ds.numNA") to apply to each variable in df; must be a single character string naming a function that exists in the current R session, not a function object.
 #' @param datasources A list of DSConnection-class objects obtained after login. If not specified, the default set of connections is used, as returned by datashield.connections_find.
 #' @param save Logical; if TRUE the resulting summary table is written to a CSV file in the current working directory. Defaults to FALSE.
 #' @return A data.frame is returned to the caller, with one row per variable in df and one column per connected study, holding the per-variable, per-study output of ds_function; if save = TRUE the same table is also written to a CSV file in the working directory. Since the table only combines results already returned by the disclosure-controlled ds_function calls, ds.wrapper applies no additional filtering itself.
@@ -15,7 +15,7 @@
 #' require('DSI')
 #' require('DSOpal')
 #' require('dsSupportClient')
-#' 
+#'
 #' builder <- DSI::newDSLoginBuilder()
 #' builder$append(server = "study1",
 #'                url = "https://opal-demo.obiba.org/",
@@ -31,13 +31,13 @@
 #'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
 #' logindata <- builder$build()
 #' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
-#' 
+#'
 #' # Retrieving information on variable classes in the specified data.frame
 #' ds.wrapper(df = "D", ds_function = ds.class)
-#' 
+#'
 #' # Retrieving information on how many NAs are present in each variable
 #' ds.wrapper(df = "D", ds_function = ds.numNA)
-#' 
+#'
 #' datashield.logout(connections)
 #' }
 #' @export
@@ -61,6 +61,17 @@ ds.wrapper <- function(df = "D", ds_function = NULL, datasources = NULL,  save =
   }
 
 
+  if (!is.character(ds_function) || length(ds_function) != 1) {
+    stop("ds_function must be a single string, e.g. 'ds.class'")
+  }
+
+  if (!exists(ds_function, mode = "function")) {
+    stop(paste0("Function '", ds_function, "' not found"))
+  }
+
+  ds_fun_name <- ds_function
+  ds_function <- get(ds_function, mode = "function")
+
   #Check whether object are present in all datasources: waiting for function to be exported in dsBaseClient, otherwise R CMD Check failure
   #defined <- dsBaseClient:::isDefined(datasources, df)
 
@@ -70,7 +81,7 @@ ds.wrapper <- function(df = "D", ds_function = NULL, datasources = NULL,  save =
 
   for (p in 1:length(datasources)){
 
-    colNames <- paste0(datasources[[p]]@name,".",(strsplit(as.character(substitute(ds_function)), ".",fixed =TRUE))[[1]][2])
+    colNames <- paste0(datasources[[p]]@name,".",(strsplit(ds_fun_name, ".",fixed =TRUE))[[1]][2])
 
 
     y <- data.frame()
@@ -97,8 +108,8 @@ ds.wrapper <- function(df = "D", ds_function = NULL, datasources = NULL,  save =
 
 
   if (save == TRUE){
-    utils::write.csv(summary, file = paste0(as.character(substitute(ds_function)),"_overview.csv"), row.names = TRUE)
-    print(paste0("The overview file ", paste0("'",as.character(substitute(ds_function)),"_overview.csv'")," has been saved at ",getwd(), "."))
+    utils::write.csv(summary, file = paste0(ds_fun_name,"_overview.csv"), row.names = TRUE)
+    print(paste0("The overview file ", paste0("'",ds_fun_name,"_overview.csv'")," has been saved at ",getwd(), "."))
   }
 
   return(summary)
