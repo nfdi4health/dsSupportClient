@@ -7,6 +7,8 @@
 #' @param type "split" or "combine"
 #' @param data A data.frame on the server-side
 #'
+#'
+#'
 #' @return robust standard errors of the formula
 #' @export
 #'
