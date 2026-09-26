@@ -1,9 +1,8 @@
-name: Check DESCRIPTION Authors
+name: Update DESCRIPTION Authors
 
 on:
   pull_request:
     branches: [dev]
-    paths: ['R/**']
 
 jobs:
   check-authors:
@@ -11,7 +10,7 @@ jobs:
       id-token: write
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/check-description-authors.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/authors-suggest.yml@main
     secrets:
-      app-id: ${{ secrets.APP_ID }}
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
