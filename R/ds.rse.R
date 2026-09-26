@@ -1,18 +1,41 @@
-#' Robust Standard Errors HC1
-#'
-#' @param formula The formula to perform RSE e.g. "Age ~ Sex + Weight"
-#' @param datasources A list of \code{\link{DSConnection-class}} objects obtained after login.
-#' If the \code{datasources} argument is not specified the default set of connections will be
-#' used: see \code{\link{datashield.connections_default}}.
-#' @param type "split" or "combine"
-#' @param data A data.frame on the server-side
-#'
-#'
-#'
-#' @return robust standard errors of the formula
+#' @title Robust Standard Errors HC1
+#' @description Fits a gaussian GLM on server-side data via ds.glm and computes heteroskedasticity-consistent (HC1) robust standard errors, confidence intervals, z-statistics and p-values for its coefficients.
+#' @details This function chains multiple DataSHIELD assign/aggregate calls (ds.glm, ds.dataFrame, ds.completeCases, ds.asDataMatrix, ds.matrixMult, ds.matrixInvert, ds.matrixDiag, ds.make, ds.meanSdGp, among others) to reconstruct a sandwich-type HC1 variance-covariance matrix without transferring individual-level data off the servers. With type = "split" the whole pipeline (including a separate ds.glm fit) is repeated once per connection in datasources, giving one robust-SE table per study; with type = "combine" a single pooled ds.glm fit across all datasources is used and the cross-product matrices needed for the sandwich estimator are accumulated across studies before being combined locally in R. No single server function implements the robust-SE calculation itself; it is assembled client-side from many elementary server-side aggregate/assign operations.
+#' @param formula A character string giving the model formula, e.g. "Age ~ Sex + Weight"; it is parsed by splitting on '~' and '+' to extract the outcome and covariate names, so it must be a string rather than an R formula object.
+#' @param datasources A list of DSConnection-class objects, as returned by DSI::datashield.login, indicating which server-side data sources to use; there is no default, so this must always be supplied explicitly.
+#' @param type A character string, either "split" (fit the model and compute robust SEs separately within each study, returning a list of tables) or "combine" (fit one pooled model across all datasources and compute a single combined robust-SE table); defaults to "split".
+#' @param data A character string giving the name of the data frame on the server (in each connection's R session) that contains the variables referenced in formula.
+#' @return If type = "split", a named list (one element per study, named after each connection) of data.frames with columns Beta, Robust SE, Robust Z, Robust P, Robust LCI and Robust UCI, one row per model term. If type = "combine", a single such data.frame pooled across all studies with an additional Nvalid column; a message reporting elapsed computation time is also printed as a side effect. No individual-level data is returned to the client; only these aggregated coefficient-level statistics come back from the server.
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.rse(formula = "LAB_HDL ~ PM_BMI_CONTINUOUS + GENDER",
+#'        datasources = connections,
+#'        type = "combine",
+#'        data = "D")
+#' 
+#' datashield.logout(connections)
+#' }
 #' @export
-#'
-#'
 ds.rse <- function(formula, datasources, type = "split", data) {
 
 
