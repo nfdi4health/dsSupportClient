@@ -11,7 +11,7 @@ on:
 
 jobs:
   check:
-    uses: FlorianSchw/package-workflows/.github/workflows/R-CMD-Check.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/r-cmd-check.yml@main
     with:
       extra-apt-packages: ''
       extra-r-packages: ''

@@ -10,7 +10,7 @@ jobs:
       id-token: write
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/check-description-authors.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/authors-suggest.yml@main
     secrets:
       app-client-id: ${{ secrets.APP_CLIENT_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
