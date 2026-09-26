@@ -1,0 +1,20 @@
+name: Workflow Graphs
+
+on:
+  push:
+    branches: [dev]   # where merges land; [main] in repos without dev
+    paths: ['.github/workflows/**', '!.github/workflows/README.md']
+  pull_request:
+    branches: [dev]
+    paths: ['.github/workflows/**', '!.github/workflows/README.md']
+  workflow_dispatch:
+
+jobs:
+  workflow-graphs:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: FlorianSchw/package-workflows/.github/workflows/workflow-graphs.yml@main
+    secrets:
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
