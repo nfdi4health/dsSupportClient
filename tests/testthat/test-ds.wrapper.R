@@ -95,3 +95,32 @@ test_that("ds.wrapper column order follows the order of the supplied datasources
 test_that("ds.wrapper errors when the data.frame name does not exist on the server", {
   expect_error(ds.wrapper(df = "NotThere", ds_function = ds.class, datasources = conns[1]))
 })
+
+test_that("ds.wrapper with ds.length returns the length of each variable per server", {
+  res <- ds.wrapper(df = "D", ds_function = ds.length, datasources = conns[c(1, 3)])
+  expect_equal(dim(res), c(4L, 2L))
+  expect_equal(colnames(res), c("Server1.length", "Server3.length"))
+  expect_equal(rownames(res), c("ID", "Sex", "Age", "Weight"))
+  expect_equal(res$Server1.length, c(29, 29, 29, 29))
+  expect_equal(res$Server3.length, c(29, 29, 29, 29))
+})
+
+test_that("ds.wrapper uses the default datasources from datashield.connections_find when datasources is NULL", {
+  res <- ds.wrapper(df = "D", ds_function = ds.numNA)
+  expect_equal(dim(res), c(4L, 4L))
+  expect_equal(colnames(res), c("Server1.numNA", "Server2.numNA", "Server3.numNA", "Server4.numNA"))
+  expect_equal(rownames(res), c("ID", "Sex", "Age", "Weight"))
+  expect_equal(res$Server2.numNA, c(0, 3, 0, 3))
+})
+
+test_that("ds.wrapper errors when datasources is an empty list", {
+  expect_error(ds.wrapper(df = "D", ds_function = ds.class, datasources = list()))
+})
+
+test_that("ds.wrapper on a server-side subset data.frame returns only the columns of that subset", {
+  ds.dataFrameSubset(df.name = "D", V1.name = "D$Age", V2.name = "30", Boolean.operator = ">", keep.cols = c(1, 2), newobj = "Dsub", datasources = conns[1])
+  res <- ds.wrapper(df = "Dsub", ds_function = ds.class, datasources = conns[1])
+  expect_equal(dim(res), c(2L, 1L))
+  expect_equal(rownames(res), c("ID", "Sex"))
+  expect_equal(res$Server1.class, c("integer", "factor"))
+})
