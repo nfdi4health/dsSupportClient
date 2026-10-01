@@ -2,9 +2,6 @@ name: Workflow Graphs
 
 on:
   push:
-    branches: [dev]   # where merges land; [main] in repos without dev
-    paths: ['.github/workflows/**']
-  pull_request:
     branches: [dev]
     paths: ['.github/workflows/**']
   workflow_dispatch:

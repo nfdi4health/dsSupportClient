@@ -14,9 +14,9 @@ jobs:
       id-token: write
       contents: write
       pull-requests: write
+      issues: write
     uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
     with:
-      scan-mode: ${{ github.event_name == 'pull_request' && 'changed' || 'all' }}
       datashield: true
       datashield-type: client
     secrets:
