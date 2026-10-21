@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/authors-suggest.yml@v1/foundation
+    uses: nfdi4health/datashield-workflows/.github/workflows/authors-suggest.yml@v1/foundation
     with:
       datashield-type: client   # only for the usage counts
     secrets:

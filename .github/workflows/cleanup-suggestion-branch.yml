@@ -9,4 +9,4 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
-    uses: FlorianSchw/package-workflows/.github/workflows/cleanup-suggestion-branch.yml@v1/foundation
+    uses: nfdi4health/datashield-workflows/.github/workflows/cleanup-suggestion-branch.yml@v1/foundation

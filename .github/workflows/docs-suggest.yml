@@ -23,7 +23,7 @@ jobs:
       issues: write
       actions: read    # earlier runs: what the last review covered
       checks: read     # their annotations
-    uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@v1/foundation
+    uses: nfdi4health/datashield-workflows/.github/workflows/roxygen-suggest.yml@v1/foundation
     with:
       review-scope: ${{ inputs.scope || 'changed' }}
       datashield-type: client
@@ -38,4 +38,4 @@ jobs:
     if: github.event_name == 'schedule'
     permissions:
       actions: write
-    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@v1/foundation
+    uses: nfdi4health/datashield-workflows/.github/workflows/workflow-keepalive.yml@v1/foundation
