@@ -1,12 +1,12 @@
-#'
 #' @title Table function for categorical data
-#' @param datasources An opal connection
-#' @param df specifies the  df that was assigned in the login, default is "D"
+#' @description Builds a combined frequency table for every categorical (factor) variable in a server-side data frame, pooling results across all connected studies. It skips variables that are entirely missing (NA) in every study.
+#' @details For each factor variable identified via ds.wrapper and ds.class, this function calls dsBaseClient::ds.numNA and dsBaseClient::ds.length to check for all-missing variables, then builds a frequency table with dsBaseClient::ds.table (using useNA = "always"), discarding the row-proportions component. Server function called: `ds.table`. Results for all variables are row-bound into a single data.frame with dplyr::bind_rows.
+#' @param df Character string giving the name of the data frame object already assigned on the server(s) (as created at login), not a local R data frame; defaults to "D".
+#' @param datasources A list of DSConnection-class objects, as produced by DSI::datashield.login(); if NULL (the default) the connections are obtained via DSI::datashield.connections_find().
 #' @return runs the datashield function ds.table on all categorical variables of all studies and outputs a table with the outcome
-#' @export
 #' @import dplyr
 #' @import dsBaseClient
-#'
+#' @export
 
 ds.tableBatch <- function(df = "D", datasources = NULL){
 
