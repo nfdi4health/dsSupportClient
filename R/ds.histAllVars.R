@@ -1,4 +1,5 @@
 #' @title DataSHIELD helper function for histograms
+#' @description Generates and saves histogram plots for all numeric or integer variables across one or more DataSHIELD-connected studies.
 #' @details For each study connection, this retrieves variable names via dsBaseClient::ds.colnames, checks each variable's type and missingness with ds.class, ds.numNA, ds.length and ds.mean, and for suitable numeric/integer variables builds a histogram. Server function called: ds.histogram, once to print a disclosure-controlled summary and once to render the plot captured into a PNG file. Plots are written to a local "histograms" directory with one subdirectory per study, named after each study's connection name.
 #' @param datasources A list of DSConnection-class objects as created by DSI::datashield.login(); if NULL (the default), the function looks for existing connections via DSI::datashield.connections_find().
 #' @param method A string naming the histogram-building method to pass to dsBaseClient::ds.histogram (e.g. "deterministic" or "probabilistic"); defaults to "deterministic".
