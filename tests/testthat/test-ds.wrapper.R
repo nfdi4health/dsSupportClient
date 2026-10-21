@@ -95,3 +95,31 @@ test_that("ds.wrapper column order follows the order of the supplied datasources
 test_that("ds.wrapper errors when the data.frame name does not exist on the server", {
   expect_error(ds.wrapper(df = "NotThere", ds_function = ds.class, datasources = conns[1]))
 })
+
+test_that("ds.wrapper uses datashield.connections_find() when datasources is NULL and returns classes for all four servers", {
+  res <- ds.wrapper(df = "D", ds_function = ds.class)
+  expect_equal(dim(res), c(4L, 4L))
+  expect_equal(colnames(res), c("Server1.class", "Server2.class", "Server3.class", "Server4.class"))
+  expect_equal(rownames(res), c("ID", "Sex", "Age", "Weight"))
+  expect_equal(res$Server4.class, c("integer", "factor", "integer", "character"))
+})
+
+test_that("ds.wrapper with save = TRUE prints a message naming the saved overview file", {
+  old_wd <- setwd(tempdir())
+  on.exit(setwd(old_wd), add = TRUE)
+  if (file.exists("ds.class_overview.csv")) file.remove("ds.class_overview.csv")
+  expect_output(ds.wrapper(df = "D", ds_function = ds.class, datasources = conns[1], save = TRUE),
+                "ds.class_overview.csv", fixed = TRUE)
+  expect_true(file.exists("ds.class_overview.csv"))
+  file.remove("ds.class_overview.csv")
+})
+
+test_that("ds.wrapper returns a data.frame whose column names combine server name and the second part of the function name", {
+  res <- ds.wrapper(df = "D", ds_function = ds.numNA, datasources = conns[2:3])
+  expect_s3_class(res, "data.frame")
+  expect_equal(colnames(res), c("Server2.numNA", "Server3.numNA"))
+  expect_null(res$rn)
+  expect_equal(dim(res), c(4L, 2L))
+  expect_equal(res$Server2.numNA, c(0, 3, 0, 3))
+  expect_equal(res$Server3.numNA, c(0, 0, 0, 3))
+})
