@@ -95,3 +95,42 @@ test_that("ds.wrapper column order follows the order of the supplied datasources
 test_that("ds.wrapper errors when the data.frame name does not exist on the server", {
   expect_error(ds.wrapper(df = "NotThere", ds_function = ds.class, datasources = conns[1]))
 })
+
+test_that("ds.wrapper defaults to all connected datasources when datasources is NULL", {
+  res <- ds.wrapper(df = "D", ds_function = ds.class)
+  expect_equal(dim(res), c(4L, 4L))
+  expect_equal(colnames(res), c("Server1.class", "Server2.class", "Server3.class", "Server4.class"))
+  expect_equal(rownames(res), c("ID", "Sex", "Age", "Weight"))
+  expect_equal(res$Server4.class, c("integer", "factor", "integer", "character"))
+})
+
+test_that("ds.wrapper with save = TRUE prints a message naming the written overview file", {
+  old_wd <- setwd(tempdir())
+  on.exit(setwd(old_wd), add = TRUE)
+  if (file.exists("ds.numNA_overview.csv")) file.remove("ds.numNA_overview.csv")
+  expect_output(ds.wrapper(df = "D", ds_function = ds.numNA, datasources = conns[1], save = TRUE),
+                "ds.numNA_overview.csv", fixed = TRUE)
+  expect_true(file.exists("ds.numNA_overview.csv"))
+  written <- read.csv("ds.numNA_overview.csv", row.names = 1)
+  expect_equal(dim(written), c(4L, 1L))
+  expect_equal(written$Server1.numNA, c(0, 2, 1, 2))
+  file.remove("ds.numNA_overview.csv")
+})
+
+test_that("ds.wrapper with save = FALSE writes no csv file", {
+  old_wd <- setwd(tempdir())
+  on.exit(setwd(old_wd), add = TRUE)
+  if (file.exists("ds.class_overview.csv")) file.remove("ds.class_overview.csv")
+  res <- ds.wrapper(df = "D", ds_function = ds.class, datasources = conns[1], save = FALSE)
+  expect_false(file.exists("ds.class_overview.csv"))
+  expect_equal(res$Server1.class, c("integer", "factor", "integer", "numeric"))
+})
+
+test_that("ds.wrapper repeats the same server twice when the same connection is supplied twice", {
+  res <- ds.wrapper(df = "D", ds_function = ds.class, datasources = conns[c(1, 1)])
+  expect_equal(dim(res), c(4L, 2L))
+  expect_equal(colnames(res), c("Server1.class.x", "Server1.class.y"))
+  expect_equal(rownames(res), c("ID", "Sex", "Age", "Weight"))
+  expect_equal(res[[1]], c("integer", "factor", "integer", "numeric"))
+  expect_equal(res[[2]], c("integer", "factor", "integer", "numeric"))
+})
