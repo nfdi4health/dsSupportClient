@@ -11,16 +11,17 @@ blocks is yours: add explanations anywhere, it is never overwritten.
 
 | Name | File | Runs on | Calls | Produces |
 |---|---|---|---|---|
-| Update DESCRIPTION Authors | `check-author-included.yml` | PR into dev | FlorianSchw/package-workflows › authors-suggest.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request* |
-| Commit compatibility check | `commitlint.yml` | PR into dev | FlorianSchw/package-workflows › commitlint.yml@main | Check: commit messages follow Conventional Commits |
-| Roxygen Doc Suggestions | `docs-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • FlorianSchw/package-workflows › roxygen-suggest.yml@main<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
-| R CMD Check | `R-CMD-Check.yml` | • PR into dev (only if: R/\*\*, tests/\*\*, .github/\*\*, DESCRIPTION, NAMESPACE changed)<br>• Weekly (Mon)<br>• Manual run | • FlorianSchw/package-workflows › r-cmd-check.yml@main<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@main | • Check: R CMD check passes<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
-| Test setup suggestions | `test-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • FlorianSchw/package-workflows › test-suggest.yml@main<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Issue for a likely bug in the code<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
-| Cleanup Suggestion Branch | `cleanup-suggestion-branch.yml` | PR closed | FlorianSchw/package-workflows › cleanup-suggestion-branch.yml@main | Bot branch deleted — *only if: PR from bot-suggest/ branches* |
-| Release | `release-trigger.yml` | PR into main | • FlorianSchw/package-workflows › r-cmd-check.yml@main<br>• FlorianSchw/package-workflows › merge-pull-request.yml@main<br>• FlorianSchw/package-workflows › create-issue.yml@main<br>• FlorianSchw/package-workflows › trigger-release-publish.yml@main | • Check: R CMD check passes — *only if: PR comes from dev*<br>• PR merged — *if check succeeds*<br>• Issue for the PR author — *if check fails*<br>• starts **Publish Release** |
-| Publish Release | `release-publish.yml` | Dispatch: release-publish | FlorianSchw/package-workflows › package-release.yml@main | Version commit, tag and draft release |
-| Require Head Branch | `require-head-branch.yml` | PR into main | FlorianSchw/package-workflows › require-head-branch.yml@main | Check: PR comes from dev |
-| Workflow Graphs | `workflow-graph.yml` | • Push to dev (only if: .github/workflows/\*\* changed)<br>• Manual run | FlorianSchw/package-workflows › workflow-graphs.yml@main | • Commit on the branch — *only if: push*<br>• Note on the PR: runs on push only — *only if: pull request* |
+| Update DESCRIPTION Authors | `check-author-included.yml` | PR into dev | FlorianSchw/package-workflows › authors-suggest.yml@v1/foundation | • Suggestion PR<br>• Comment on the PR — *only if: pull request* |
+| Commit compatibility check | `commitlint.yml` | PR into dev | FlorianSchw/package-workflows › commitlint.yml@v1/foundation | Check: commit messages follow Conventional Commits |
+| Roxygen Doc Suggestions | `docs-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • FlorianSchw/package-workflows › roxygen-suggest.yml@v1/foundation<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@v1/foundation | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
+| R CMD Check | `R-CMD-Check.yml` | • PR into dev (only if: R/\*\*, tests/\*\*, .github/\*\*, DESCRIPTION, NAMESPACE changed)<br>• Weekly (Mon)<br>• Manual run | • FlorianSchw/package-workflows › r-cmd-check.yml@v1/foundation<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@v1/foundation | • Check: R CMD check passes<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
+| Test setup suggestions | `test-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • FlorianSchw/package-workflows › test-suggest.yml@v1/foundation<br>• FlorianSchw/package-workflows › workflow-keepalive.yml@v1/foundation | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Issue for a likely bug in the code<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
+| Cleanup Suggestion Branch | `cleanup-suggestion-branch.yml` | PR closed | FlorianSchw/package-workflows › cleanup-suggestion-branch.yml@v1/foundation | Bot branch deleted — *only if: PR from bot-suggest/ branches* |
+| Release | `release-trigger.yml` | PR into main | • FlorianSchw/package-workflows › r-cmd-check.yml@v1/foundation<br>• FlorianSchw/package-workflows › merge-pull-request.yml@v1/foundation<br>• FlorianSchw/package-workflows › create-issue.yml@v1/foundation<br>• FlorianSchw/package-workflows › trigger-release-publish.yml@v1/foundation | • Check: R CMD check passes — *only if: PR comes from dev*<br>• PR merged — *if check succeeds*<br>• Issue for the PR author — *if check fails*<br>• starts **Publish Release** |
+| Publish Release | `release-publish.yml` | Dispatch: release-publish | FlorianSchw/package-workflows › package-release.yml@v1/foundation | Version commit, tag and draft release |
+| Require Head Branch | `require-head-branch.yml` | PR into main | FlorianSchw/package-workflows › require-head-branch.yml@v1/foundation | Check: PR comes from dev |
+| Suggestion Choices | `suggestion-choices.yml` | PR edited | FlorianSchw/package-workflows › suggestion-choices.yml@v1/foundation | — |
+| Workflow Graphs | `workflow-graph.yml` | • Push to dev (only if: .github/workflows/\*\* changed)<br>• Manual run | FlorianSchw/package-workflows › workflow-graphs.yml@v1/foundation | • Commit on the branch — *only if: push*<br>• Note on the PR: runs on push only — *only if: pull request* |
 
 ## Events
 
@@ -100,6 +101,19 @@ flowchart TD
   out_release_trigger_yml_on_success_2 -. "dispatch: release-publish" .-> wf_release_publish_yml
   wf_require_head_branch_yml --> out_2
   wf_release_publish_yml --> out_3
+  classDef outcome stroke-dasharray: 4 3
+```
+
+### PR edited
+
+*When a pull request is edited.*
+
+```mermaid
+%%{init: {"flowchart": {"rankSpacing": 140, "nodeSpacing": 45}}}%%
+flowchart LR
+  ev(["PR edited"])
+  wf_suggestion_choices_yml["<b>Suggestion Choices</b>"]
+  ev --> wf_suggestion_choices_yml
   classDef outcome stroke-dasharray: 4 3
 ```
 
