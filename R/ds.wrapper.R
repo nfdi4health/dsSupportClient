@@ -63,7 +63,7 @@ ds.wrapper <- function(df = "D", ds_function = NULL, datasources = NULL,  save =
   }
 
 
-  #Check whether object are present in all datasources: waiting for function to be exported in dsBaseClient, otherwise R CMD Check failure
+  #Check whether the object is present in all datasources: waiting for function to be exported in dsBaseClient, otherwise R CMD Check failure
   #defined <- dsBaseClient:::isDefined(datasources, df)
 
 
