@@ -6,6 +6,6 @@ on:
 
 jobs:
   require-head-branch:
-    uses: FlorianSchw/package-workflows/.github/workflows/require-head-branch.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/require-head-branch.yml@v1/foundation
     with:
       allowed-head: 'dev'

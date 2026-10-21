@@ -7,6 +7,12 @@ on:
   schedule:
     - cron: '0 6 1 * *'
   workflow_dispatch:
+    inputs:
+      scope:
+        description: 'changed: what changed since the last review; all: every R file (a full review)'
+        type: choice
+        options: [changed, all]
+        default: changed
 
 jobs:
   suggest-docs:
@@ -15,9 +21,11 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@main
+      actions: read    # earlier runs: what the last review covered
+      checks: read     # their annotations
+    uses: FlorianSchw/package-workflows/.github/workflows/roxygen-suggest.yml@v1/foundation
     with:
-      datashield: true
+      review-scope: ${{ inputs.scope || 'changed' }}
       datashield-type: client
     secrets:
       anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
@@ -30,4 +38,4 @@ jobs:
     if: github.event_name == 'schedule'
     permissions:
       actions: write
-    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@v1/foundation

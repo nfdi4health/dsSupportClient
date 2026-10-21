@@ -7,10 +7,11 @@ on:
 jobs:
   check-authors:
     permissions:
-      id-token: write
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/authors-suggest.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/authors-suggest.yml@v1/foundation
+    with:
+      datashield-type: client   # only for the usage counts
     secrets:
       app-client-id: ${{ secrets.APP_CLIENT_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
