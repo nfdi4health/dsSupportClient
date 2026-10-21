@@ -11,7 +11,7 @@ on:
 
 jobs:
   check:
-    uses: FlorianSchw/package-workflows/.github/workflows/r-cmd-check.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/r-cmd-check.yml@v1/foundation
     with:
       extra-apt-packages: ''
       extra-r-packages: ''
@@ -22,4 +22,4 @@ jobs:
     if: github.event_name == 'schedule'
     permissions:
       actions: write
-    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/workflow-keepalive.yml@v1/foundation
