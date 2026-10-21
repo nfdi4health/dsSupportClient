@@ -5,7 +5,41 @@
 #' @param datasources A list of DSConnection-class objects obtained after login, as produced by DSI::datashield.login; this argument is required and has no default.
 #' @param type A character string, either "split" (default) to compute robust standard errors separately for each study, or "combine" to pool all studies into one estimate; any other value returns NULL.
 #' @param data A character string giving the name of a data frame on the server-side (as assigned via datashield.assign) containing the variables referenced in formula.
-#' @return robust standard errors of the formula
+#' @return A named list of data frames (one per study, named after each connection) when type = "split", or a single pooled data frame when type = "combine"; each data frame reports Beta, Robust SE, Robust Z, Robust P, Robust LCI and Robust UCI per model term (plus Nvalid when combined). All displayed quantities are aggregate statistics computed from server-side summaries, so no individual-level data is returned to the caller; if type is neither "split" nor "combine" the function returns NULL.
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.rse(formula = "LAB_HDL ~ GENDER + PM_BMI_CONTINUOUS",
+#'        datasources = connections,
+#'        type = "split",
+#'        data = "D")
+#' 
+#' ds.rse(formula = "LAB_HDL ~ GENDER + PM_BMI_CONTINUOUS",
+#'        datasources = connections,
+#'        type = "combine",
+#'        data = "D")
+#' 
+#' datashield.logout(connections)
+#' }
 #' @export
 ds.rse <- function(formula, datasources, type = "split", data) {
 

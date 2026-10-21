@@ -1,10 +1,8 @@
 #' @title Executes ds.summary function for variables in a data.frame
-#' @description The function executes the ds.summary function for all numeric or integer variables of a data.frame.
-#' @details ds.summaryVars inspects, for each connected study, the column names of the server-side data.frame named by df (via ds.colnames) and the class of each variable (via dsBaseClient::ds.class). For variables of class 'numeric' or 'integer' with at least one non-missing value, it calls dsBaseClient::ds.summary and dsBaseClient::ds.var to build a summary table augmented with the standard deviation, per study.
-#' @param df A data.frame on the server-side.
-#' @param datasources A list of \code{\link{DSConnection-class}} objects obtained after login.
-#' If the \code{datasources} argument is not specified the default set of connections will be
-#' used: see \code{\link{datashield.connections_default}}.
+#' @description Computes, for each connected study, a per-variable summary table restricted to numeric or integer columns of a server-side data.frame, augmented with the standard deviation.
+#' @details For each connected study, ds.summaryVars retrieves the column names of the server-side data.frame named by df (via ds.colnames) and the class of each variable (via dsBaseClient::ds.class). For variables of class 'numeric' or 'integer' that have at least one non-missing value (checked via dsBaseClient::ds.numNA and dsBaseClient::ds.length), it calls dsBaseClient::ds.summary and dsBaseClient::ds.var to build a summary table augmented with the standard deviation, per study.
+#' @param df A character string giving the name of a data.frame on the server-side (default "D"), as assigned e.g. via DSI::datashield.assign.
+#' @param datasources A list of \code{\link{DSConnection-class}} objects obtained after login. If NULL (the default), the connections are found via \code{DSI::datashield.connections_find()}.
 #' @param save Logical; if TRUE, the per-study summary table is additionally written to a CSV file named '<study>_summary.csv' in the current working directory via utils::write.csv. Default is FALSE.
 #' @return a list with the summary of each variable
 #' @author Sofia Siampani (Max-Delbrueck-Center, Berlin), Florian Schwarz (German Institute of Human Nutrition, Potsdam-Rehbruecke)
