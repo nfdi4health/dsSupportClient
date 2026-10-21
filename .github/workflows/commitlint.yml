@@ -6,4 +6,4 @@ on:
 
 jobs:
   commitlint:
-    uses: FlorianSchw/package-workflows/.github/workflows/commitlint.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/commitlint.yml@v1/foundation

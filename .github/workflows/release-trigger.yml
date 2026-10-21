@@ -14,21 +14,21 @@ permissions:
 jobs:
   check:
     if: github.head_ref == 'dev'
-    uses: FlorianSchw/package-workflows/.github/workflows/r-cmd-check.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/r-cmd-check.yml@v1/foundation
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   on-success:
     needs: check
     if: needs.check.result == 'success'
-    uses: FlorianSchw/package-workflows/.github/workflows/merge-pull-request.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/merge-pull-request.yml@v1/foundation
     with:
       pr_number: ${{ github.event.pull_request.number }}
 
   on-failure:
     needs: check
     if: needs.check.result == 'failure'
-    uses: FlorianSchw/package-workflows/.github/workflows/create-issue.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/create-issue.yml@v1/foundation
     with:
       pr_author: ${{ github.event.pull_request.user.login }}
       run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -38,4 +38,4 @@ jobs:
     if: needs.on-success.result == 'success'
     permissions:
       contents: write
-    uses: FlorianSchw/package-workflows/.github/workflows/trigger-release-publish.yml@main
+    uses: FlorianSchw/package-workflows/.github/workflows/trigger-release-publish.yml@v1/foundation
