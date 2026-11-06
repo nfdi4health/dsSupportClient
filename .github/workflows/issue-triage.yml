@@ -2,7 +2,9 @@ name: Issue Triage
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, labeled]
+  issue_comment:
+    types: [created]
 
 jobs:
   triage:
@@ -10,6 +12,8 @@ jobs:
       issues: write
       id-token: write
     uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@main
+    with:
+      wait-minutes: 2
     secrets:
       anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
       anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
