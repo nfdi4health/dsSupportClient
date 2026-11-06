@@ -23,7 +23,7 @@ blocks is yours: add explanations anywhere, it is never overwritten.
 | Suggestion Choices | `suggestion-choices.yml` | PR edited | nfdi4health/datashield-workflows › suggestion-choices.yml@main | Bot branch matches the checkboxes — *only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot', only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot'* |
 | Workflow Graphs | `workflow-graph.yml` | • Push to dev (only if: .github/workflows/\*\* changed)<br>• Manual run | nfdi4health/datashield-workflows › workflow-graphs.yml@main | • Commit on the branch — *only if: push*<br>• Note on the PR: runs on push only — *only if: pull request* |
 | Issue Label Check | `issue-label-check.yml` | issues | nfdi4health/datashield-workflows › issue-label-check.yml@main | Approval label removed, with a comment |
-| Issue Triage | `issue-triage.yml` | issues | nfdi4health/datashield-workflows › issue-triage.yml@main | Triage comment on the issue |
+| Issue Triage | `issue-triage.yml` | • issues<br>• issue_comment | nfdi4health/datashield-workflows › issue-triage.yml@main | Triage comment on the issue |
 
 ## Events
 
@@ -180,6 +180,21 @@ flowchart LR
   out_2(["Triage comment on the<br/>issue"]):::outcome
   wf_issue_label_check_yml --> out_1
   wf_issue_triage_yml --> out_2
+  classDef outcome stroke-dasharray: 4 3
+```
+
+### issue_comment
+
+*issue_comment.*
+
+```mermaid
+%%{init: {"flowchart": {"rankSpacing": 140, "nodeSpacing": 45}}}%%
+flowchart LR
+  ev(["issue_comment"])
+  wf_issue_triage_yml["<b>Issue Triage</b>"]
+  ev --> wf_issue_triage_yml
+  out_1(["Triage comment on the<br/>issue"]):::outcome
+  wf_issue_triage_yml --> out_1
   classDef outcome stroke-dasharray: 4 3
 ```
 <!-- workflow-graphs:overview:end -->
