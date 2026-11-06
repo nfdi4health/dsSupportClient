@@ -15,7 +15,7 @@ jobs:
     with:
       extra-apt-packages: ''
       extra-r-packages: ''
-      r-version-list: ["release"]
+      r-version-list: '["release"]'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
