@@ -22,6 +22,7 @@ blocks is yours: add explanations anywhere, it is never overwritten.
 | Require Head Branch | `require-head-branch.yml` | PR into main | nfdi4health/datashield-workflows › require-head-branch.yml@main | Check: PR comes from dev |
 | Suggestion Choices | `suggestion-choices.yml` | PR edited | nfdi4health/datashield-workflows › suggestion-choices.yml@main | Bot branch matches the checkboxes — *only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot', only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot'* |
 | Workflow Graphs | `workflow-graph.yml` | • Push to dev (only if: .github/workflows/\*\* changed)<br>• Manual run | nfdi4health/datashield-workflows › workflow-graphs.yml@main | • Commit on the branch — *only if: push*<br>• Note on the PR: runs on push only — *only if: pull request* |
+| Issue Label Check | `issue-label-check.yml` | issues | nfdi4health/datashield-workflows › issue-label-check.yml@feat/issue-label-check | — |
 
 ## Events
 
@@ -159,6 +160,19 @@ flowchart LR
   wf_test_suggest_yml --> out_1
   wf_test_suggest_yml --> out_4
   wf_test_suggest_yml --> out_2
+  classDef outcome stroke-dasharray: 4 3
+```
+
+### issues
+
+*issues.*
+
+```mermaid
+%%{init: {"flowchart": {"rankSpacing": 140, "nodeSpacing": 45}}}%%
+flowchart LR
+  ev(["issues"])
+  wf_issue_label_check_yml["<b>Issue Label Check</b>"]
+  ev --> wf_issue_label_check_yml
   classDef outcome stroke-dasharray: 4 3
 ```
 <!-- workflow-graphs:overview:end -->
