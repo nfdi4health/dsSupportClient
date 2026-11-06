@@ -1,4 +1,4 @@
-#' @title Executes ds.summary function for variables in a data.frame
+#' @title Builds a per-study summary table for numeric variables
 #' @description Computes summary statistics (via ds.summary and ds.var) for all numeric or integer variables of a server-side data.frame, separately for each connected study, and optionally saves each study's table to a CSV file.
 #' @details ds.summaryVars inspects, for each connected study, the column names of the server-side data.frame named by df (via ds.colnames) and the class of each variable (via dsBaseClient::ds.class). For variables of class 'numeric' or 'integer' with at least one non-missing value, it calls dsBaseClient::ds.summary and dsBaseClient::ds.var to build a summary table augmented with the standard deviation, per study.
 #' @param df A character string giving the name of a data.frame object on the server-side (as assigned via datashield.assign); defaults to "D".
@@ -15,8 +15,6 @@
 #'
 #' # Version 1.0
 #' # Connecting to Opal Servers
-#'
-#'
 #'
 #' # loading necessary packages
 #' require("DSI")
