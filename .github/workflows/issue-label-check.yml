@@ -8,6 +8,6 @@ jobs:
   check-label:
     permissions:
       issues: write
-    uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@feat/issue-label-check
+    uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@main
     with:
       allowed-logins: FlorianSchw
