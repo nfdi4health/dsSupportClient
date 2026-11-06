@@ -1,11 +1,37 @@
 #' @title Table function for categorical data
-#' @description Builds a combined frequency table for every categorical (factor) variable in a server-side data frame, pooling results across all connected studies. It skips variables that are entirely missing (NA) in every study.
-#' @details For each factor variable identified via ds.wrapper and ds.class, this function calls dsBaseClient::ds.numNA and dsBaseClient::ds.length to check for all-missing variables, then builds a frequency table with dsBaseClient::ds.table (using useNA = "always"), discarding the row-proportions component. Server function called: `ds.table`. Results for all variables are row-bound into a single data.frame with dplyr::bind_rows.
-#' @param df Character string giving the name of the data frame object already assigned on the server(s) (as created at login), not a local R data frame; defaults to "D".
-#' @param datasources A list of DSConnection-class objects, as produced by DSI::datashield.login(); if NULL (the default) the connections are obtained via DSI::datashield.connections_find().
-#' @return runs the datashield function ds.table on all categorical variables of all studies and outputs a table with the outcome
+#' @description Builds frequency tables for every factor variable in a server-side data frame, across one or more connected studies. Variables that are entirely missing in every study are skipped.
+#' @details The function first determines variable classes with a wrapper around ds.class, keeps those classified as "factor", then for each one calls dsBaseClient::ds.numNA and dsBaseClient::ds.length to check for completeness before tabulating. Server function called: ds.table, run with useNA = "always" for each categorical variable. Results from each variable are combined locally into a single data frame with dplyr::bind_rows.
+#' @param df specifies the  df that was assigned in the login, default is "D"
+#' @param datasources A list of DSConnection-class objects, typically produced by DSI::datashield.login, indicating the studies to query. If NULL, the function uses DSI::datashield.connections_find() to find the currently open connections.
+#' @return A data frame combining, for each categorical variable found (with row names prefixed by the variable name), the per-study and pooled frequency counts returned by ds.table; variables with only missing values across all studies are omitted. No disclosure-control filtering is applied beyond what ds.table itself enforces server-side.
 #' @import dplyr
 #' @import dsBaseClient
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.tableBatch(df = "D", datasources = connections)
+#' 
+#' datashield.logout(connections)
+#' }
 #' @export
 
 ds.tableBatch <- function(df = "D", datasources = NULL){
@@ -21,10 +47,10 @@ ds.tableBatch <- function(df = "D", datasources = NULL){
   }
 
 
-  classes <- ds.wrapper(df = df, ds_function = ds.class, datasources = datasources)
+  classes <- ds.wrapper(df = df, ds_function = "ds.class", datasources = datasources)
 
   classes <- classes %>%
-    dplyr::filter_all(all_vars("factor"))
+    dplyr::filter_all(all_vars(.=="factor"))
 
   variables <- rownames(classes)
 

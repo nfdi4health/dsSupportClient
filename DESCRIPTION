@@ -27,8 +27,8 @@ Suggests:
     testthat (>= 3.0.0),
     DSLite,
     DSOpal
-RoxygenNote: 7.3.1
 Remotes: datashield/dsBaseClient, datashield/dsBase
 URL: https://github.com/sofiasiamp/dsSupportClient
 BugReports: https://github.com/sofiasiamp/dsSupportClient/issues
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
