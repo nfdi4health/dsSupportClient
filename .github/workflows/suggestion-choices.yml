@@ -1,0 +1,20 @@
+name: Suggestion Choices
+
+on:
+  pull_request:
+    types: [edited]   # a checkbox in a bot PR's description changed
+
+jobs:
+  apply-choices:
+    # Only roxygen and test bot PRs, and only edits by a person.
+    if: >-
+      (startsWith(github.head_ref, 'bot-suggest/tests') || startsWith(github.head_ref, 'bot-suggest/docs'))
+      && github.event.sender.type != 'Bot'
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+    uses: nfdi4health/datashield-workflows/.github/workflows/suggestion-choices.yml@v1/foundation
+    secrets:
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

@@ -1,17 +1,17 @@
-name: Check DESCRIPTION Authors
+name: Update DESCRIPTION Authors
 
 on:
   pull_request:
     branches: [dev]
-    paths: ['R/**']
 
 jobs:
   check-authors:
     permissions:
-      id-token: write
       contents: write
       pull-requests: write
-    uses: FlorianSchw/package-workflows/.github/workflows/check-description-authors.yml@main
+    uses: nfdi4health/datashield-workflows/.github/workflows/authors-suggest.yml@v1/foundation
+    with:
+      datashield-type: client   # only for the usage counts
     secrets:
-      app-id: ${{ secrets.APP_ID }}
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
       app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

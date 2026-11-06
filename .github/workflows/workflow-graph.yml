@@ -1,0 +1,17 @@
+name: Workflow Graphs
+
+on:
+  push:
+    branches: [dev]
+    paths: ['.github/workflows/**']
+  workflow_dispatch:
+
+jobs:
+  workflow-graphs:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: nfdi4health/datashield-workflows/.github/workflows/workflow-graphs.yml@v1/foundation
+    secrets:
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

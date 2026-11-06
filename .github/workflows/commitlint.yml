@@ -6,4 +6,4 @@ on:
 
 jobs:
   commitlint:
-    uses: FlorianSchw/package-workflows/.github/workflows/commitlint.yml@main
+    uses: nfdi4health/datashield-workflows/.github/workflows/commitlint.yml@v1/foundation
