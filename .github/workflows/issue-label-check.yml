@@ -1,0 +1,13 @@
+name: Issue Label Check
+
+on:
+  issues:
+    types: [labeled, edited]
+
+jobs:
+  check-label:
+    permissions:
+      issues: write
+    uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@feat/issue-label-check
+    with:
+      allowed-logins: FlorianSchw

@@ -15,6 +15,8 @@ jobs:
   check:
     if: github.head_ref == 'dev'
     uses: nfdi4health/datashield-workflows/.github/workflows/r-cmd-check.yml@main
+    with:
+      r-version-list: ["release"]
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
