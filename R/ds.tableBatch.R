@@ -1,7 +1,7 @@
 #' @title Table function for categorical data
 #' @description Builds frequency tables for every factor variable in a server-side data frame, across one or more connected studies. Variables that are entirely missing in every study are skipped.
 #' @details The function first determines variable classes with a wrapper around ds.class, keeps those classified as "factor", then for each one calls dsBaseClient::ds.numNA and dsBaseClient::ds.length to check for completeness before tabulating. Server function called: ds.table, run with useNA = "always" for each categorical variable. Results from each variable are combined locally into a single data frame with dplyr::bind_rows.
-#' @param df specifies the  df that was assigned in the login, default is "D"
+#' @param df A character string giving the name of the server-side data frame (as assigned during DSI::datashield.login) on which to tabulate factor variables; defaults to "D".
 #' @param datasources A list of DSConnection-class objects, typically produced by DSI::datashield.login, indicating the studies to query. If NULL, the function uses DSI::datashield.connections_find() to find the currently open connections.
 #' @return A data frame combining, for each categorical variable found (with row names prefixed by the variable name), the per-study and pooled frequency counts returned by ds.table; variables with only missing values across all studies are omitted. No disclosure-control filtering is applied beyond what ds.table itself enforces server-side.
 #' @import dplyr
