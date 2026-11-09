@@ -11,9 +11,12 @@ jobs:
     permissions:
       issues: write
       id-token: write
-    uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@main
+    # The implementer's branch of datashield-workflows until it is merged
+    # (bot-triaged, the disclosure section); then @main.
+    uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@agent-suggest/feat/implementer
     with:
       wait-minutes: 2
+      datashield: true
     secrets:
       anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
       anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
