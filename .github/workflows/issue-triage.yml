@@ -8,6 +8,11 @@ on:
 
 jobs:
   triage:
+    # Starts no runner for events the triage ignores anyway: comments on
+    # pull requests and labels other than bot-triage.
+    if: >-
+      !github.event.issue.pull_request &&
+      (github.event.action != 'labeled' || github.event.label.name == 'bot-triage')
     permissions:
       issues: write
       id-token: write
