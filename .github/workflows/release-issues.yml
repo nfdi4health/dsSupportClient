@@ -1,0 +1,19 @@
+name: Release Issues
+
+# Issues a pull request into dev closes (Closes/Fixes/Resolves #n in its
+# description or commits) get the label `next-release`; the release chain
+# (release-trigger.yml) closes them with the next release.
+on:
+  pull_request:
+    types: [closed]
+    branches: [dev]
+
+jobs:
+  mark:
+    if: github.event.pull_request.merged
+    permissions:
+      issues: write
+      pull-requests: write
+    uses: nfdi4health/datashield-workflows/.github/workflows/release-issues.yml@main
+    with:
+      step: mark
