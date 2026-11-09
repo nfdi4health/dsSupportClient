@@ -14,6 +14,7 @@ jobs:
     uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@main
     with:
       wait-minutes: 2
+      allowed-logins: FlorianSchw # for bot-triage label
     secrets:
       anthropic-organization-id: ${{ secrets.ANTHROPIC_ORG_ID }}
       anthropic-service-account-id: ${{ secrets.ANTHROPIC_SVAC_ID }}
