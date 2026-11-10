@@ -9,8 +9,11 @@
 #### Necessary Installations for DSLite to work locally
 #### In order to check for dsSupportClient to work with multiple dsBase versions, adaptation might be necessary
 #remotes::install_github("datashield/dsBase", ref = "6.3.0", dependencies=TRUE)
-remotes::install_github('datashield/DSLite')
-remotes::install_github('datashield/DSOpal')
+for (pkg in c("DSLite", "DSOpal")) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    remotes::install_github(paste0("datashield/", pkg))
+  }
+}
 
 
 
