@@ -20,9 +20,17 @@ jobs:
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  # Writes `Closes #n` for each issue labelled next-release into this pull
+  # request's description, so the merge closes them.
+  link-issues:
+    if: github.head_ref == 'dev'
+    uses: nfdi4health/datashield-workflows/.github/workflows/release-issues.yml@main
+    with:
+      step: link
+
   on-success:
-    needs: check
-    if: needs.check.result == 'success'
+    needs: [check, link-issues]
+    if: needs.check.result == 'success' && needs.link-issues.result == 'success'
     uses: nfdi4health/datashield-workflows/.github/workflows/merge-pull-request.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number }}
@@ -41,3 +49,12 @@ jobs:
     permissions:
       contents: write
     uses: nfdi4health/datashield-workflows/.github/workflows/trigger-release-publish.yml@main
+
+  # After the merge: the closed issues get `released` instead of
+  # `next-release`.
+  label-released:
+    needs: on-success
+    if: needs.on-success.result == 'success'
+    uses: nfdi4health/datashield-workflows/.github/workflows/release-issues.yml@main
+    with:
+      step: swap
