@@ -14,10 +14,11 @@ blocks is yours: add explanations anywhere, it is never overwritten.
 | Update DESCRIPTION Authors | `check-author-included.yml` | PR into dev | nfdi4health/datashield-workflows › authors-suggest.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request* |
 | Commit compatibility check | `commitlint.yml` | PR into dev | nfdi4health/datashield-workflows › commitlint.yml@main | Check: commit messages follow Conventional Commits |
 | Roxygen Doc Suggestions | `docs-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • nfdi4health/datashield-workflows › roxygen-suggest.yml@main<br>• nfdi4health/datashield-workflows › workflow-keepalive.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
-| R CMD Check | `R-CMD-Check.yml` | • PR into dev (only if: R/\*\*, tests/\*\*, .github/\*\*, DESCRIPTION, NAMESPACE changed)<br>• Weekly (Mon)<br>• Manual run | • nfdi4health/datashield-workflows › r-cmd-check.yml@main<br>• nfdi4health/datashield-workflows › workflow-keepalive.yml@main | • Check: R CMD check passes<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
+| R CMD Check | `R-CMD-Check.yml` | • PR into dev<br>• Weekly (Mon)<br>• Manual run | • nfdi4health/datashield-workflows › r-cmd-check.yml@main<br>• nfdi4health/datashield-workflows › workflow-keepalive.yml@main | • Check: R CMD check passes<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
 | Test setup suggestions | `test-suggest.yml` | • PR into dev (only if: R/\*\* changed)<br>• Monthly (day 1)<br>• Manual run | • nfdi4health/datashield-workflows › test-suggest.yml@main<br>• nfdi4health/datashield-workflows › workflow-keepalive.yml@main | • Suggestion PR<br>• Comment on the PR — *only if: pull request*<br>• Issue for a likely bug in the code<br>• Scheduled workflows kept enabled — *only if: scheduled run* |
-| Cleanup Suggestion Branch | `cleanup-suggestion-branch.yml` | PR closed | nfdi4health/datashield-workflows › cleanup-suggestion-branch.yml@main | Bot branch deleted — *only if: PR from bot-suggest/ branches* |
-| Release | `release-trigger.yml` | PR into main | • nfdi4health/datashield-workflows › r-cmd-check.yml@main<br>• nfdi4health/datashield-workflows › merge-pull-request.yml@main<br>• nfdi4health/datashield-workflows › create-issue.yml@main<br>• nfdi4health/datashield-workflows › trigger-release-publish.yml@main | • Check: R CMD check passes — *only if: PR comes from dev*<br>• PR merged — *if check succeeds*<br>• Issue for the PR author — *if check fails*<br>• starts **Publish Release** |
+| Cleanup Suggestion Branch | `cleanup-suggestion-branch.yml` | PR closed | nfdi4health/datashield-workflows › cleanup-suggestion-branch.yml@main | Bot branch deleted — *only if: github.event.pull_request.head.repo.full_name == github.repository && (startsWith(github.event.pull_request.head.ref, 'bot-suggest/') \|\| startsWith(github.event.pull_request.head.ref, 'agent-suggest/'))* |
+| Release Issues | `release-issues.yml` | PR closed | nfdi4health/datashield-workflows › release-issues.yml@main | — |
+| Release | `release-trigger.yml` | PR into main | • nfdi4health/datashield-workflows › r-cmd-check.yml@main<br>• nfdi4health/datashield-workflows › release-issues.yml@main<br>• nfdi4health/datashield-workflows › merge-pull-request.yml@main<br>• nfdi4health/datashield-workflows › create-issue.yml@main<br>• nfdi4health/datashield-workflows › trigger-release-publish.yml@main | • Check: R CMD check passes — *only if: PR comes from dev*<br>• PR merged — *only if: needs.check.result == 'success' && needs.link-issues.result == 'success'*<br>• Issue for the PR author — *if check fails*<br>• starts **Publish Release** |
 | Publish Release | `release-publish.yml` | Dispatch: release-publish | nfdi4health/datashield-workflows › package-release.yml@main | Version commit, tag and draft release |
 | Require Head Branch | `require-head-branch.yml` | PR into main | nfdi4health/datashield-workflows › require-head-branch.yml@main | Check: PR comes from dev |
 | Suggestion Choices | `suggestion-choices.yml` | PR edited | nfdi4health/datashield-workflows › suggestion-choices.yml@main | Bot branch matches the checkboxes — *only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot', only if: (startsWith(github.head_ref, 'bot-suggest/tests') \|\| startsWith(github.head_ref, 'bot-suggest/docs')) && github.event.sender.type != 'Bot'* |
@@ -43,7 +44,7 @@ flowchart LR
   ev --> wf_commitlint_yml
   wf_docs_suggest_yml["<b>Roxygen Doc Suggestions</b><br/>only if: R/#42;#42; changed"]
   ev --> wf_docs_suggest_yml
-  wf_R_CMD_Check_yml["<b>R CMD Check</b><br/>only if: R/#42;#42;, tests/#42;#42;,<br/>.github/#42;#42;, DESCRIPTION,<br/>NAMESPACE changed"]
+  wf_R_CMD_Check_yml["<b>R CMD Check</b>"]
   ev --> wf_R_CMD_Check_yml
   wf_test_suggest_yml["<b>Test setup suggestions</b><br/>only if: R/#42;#42; changed"]
   ev --> wf_test_suggest_yml
@@ -72,8 +73,10 @@ flowchart LR
 %%{init: {"flowchart": {"rankSpacing": 140, "nodeSpacing": 45}}}%%
 flowchart LR
   ev(["PR closed"])
-  wf_cleanup_suggestion_branch_yml["<b>Cleanup Suggestion Branch</b><br/>only if: PR from<br/>bot-suggest/ branches"]
+  wf_cleanup_suggestion_branch_yml["<b>Cleanup Suggestion Branch</b><br/>only if:<br/>github.event.pull_request.head.repo.full_name<br/>== github.repository &&<br/>(startsWith(github.event.pull_request.head.ref,<br/>'bot-suggest/') ||<br/>startsWith(github.event.pull_request.head.ref,<br/>'agent-suggest/'))"]
   ev --> wf_cleanup_suggestion_branch_yml
+  wf_release_issues_yml["<b>Release Issues</b>"]
+  ev --> wf_release_issues_yml
   out_1(["Bot branch deleted"]):::outcome
   wf_cleanup_suggestion_branch_yml --> out_1
   classDef outcome stroke-dasharray: 4 3
@@ -87,7 +90,7 @@ flowchart LR
 %%{init: {"flowchart": {"rankSpacing": 70, "nodeSpacing": 40}}}%%
 flowchart TD
   ev(["PR into main"])
-  wf_release_trigger_yml["<b>Release</b><br/>only if: PR comes from dev"]
+  wf_release_trigger_yml["<b>Release</b>"]
   ev --> wf_release_trigger_yml
   wf_require_head_branch_yml["<b>Require Head Branch</b>"]
   ev --> wf_require_head_branch_yml
@@ -97,8 +100,9 @@ flowchart TD
   out_1(["Issue for the PR author"]):::outcome
   out_2(["Check: PR comes from dev"]):::outcome
   out_3(["Version commit, tag and<br/>draft release"]):::outcome
-  wf_release_trigger_yml --> out_release_trigger_yml_check_1
-  out_release_trigger_yml_check_1 -- "if check succeeds" --> out_release_trigger_yml_on_success_2
+  wf_release_trigger_yml -- "only if: PR comes<br/>from dev" --> out_release_trigger_yml_check_1
+  out_release_trigger_yml_check_1 -- "only if:<br/>needs.check.result<br/>== 'success' &&<br/>needs.link-<br/>issues.result ==<br/>'success'" --> out_release_trigger_yml_on_success_2
+  wf_release_trigger_yml -- "only if:<br/>needs.check.result<br/>== 'success' &&<br/>needs.link-<br/>issues.result ==<br/>'success'" --> out_release_trigger_yml_on_success_2
   out_release_trigger_yml_check_1 -- "if check fails" --> out_1
   out_release_trigger_yml_on_success_2 -. "dispatch: release-publish" .-> wf_release_publish_yml
   wf_require_head_branch_yml --> out_2

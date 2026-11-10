@@ -37,6 +37,12 @@ Claude Console (subject-prefix + `job_workflow_ref` claim match).
   exactly one place to hook into. **Not yet enforced** — branch protection on
   `dev` via the Rulesets API is still on the to-do list; until then this is a
   convention, not a guarantee.
+- Claude Code sessions name every branch `agent-suggest/<type>/<topic>`
+  (type as in the commit messages: `fix`, `feat`, `ci`, `docs`, …) and open
+  one pull request per branch into `dev`, never stacked on another branch.
+  `cleanup-suggestion-branch.yml` deletes these branches once their pull
+  request is closed (decided 2026-11-09; see `datashield-workflows`'
+  `CLAUDE.md`).
 - The whole reusable-workflow ecosystem is being validated here first, on a
   disposable test PR, before being rolled out to real packages.
 
