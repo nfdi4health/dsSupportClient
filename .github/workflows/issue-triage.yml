@@ -11,9 +11,7 @@ jobs:
     permissions:
       issues: write
       id-token: write
-    # The implementer's branch of datashield-workflows until it is merged
-    # (bot-triaged, the disclosure section); then @main.
-    uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@agent-suggest/feat/implementer
+    uses: nfdi4health/datashield-workflows/.github/workflows/issue-triage.yml@main
     with:
       wait-minutes: 2
       datashield: true

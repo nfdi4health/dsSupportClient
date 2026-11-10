@@ -8,12 +8,12 @@ jobs:
   check-label:
     permissions:
       issues: write
-    # The implementer's branch of datashield-workflows until it is merged; then @main.
-    uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@agent-suggest/feat/implementer
+    uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@main
     with:
       allowed-logins: FlorianSchw
       # An approval that stays starts the implementer.
       runner-repository: FlorianSchw/datashield-agent-runner
     secrets:
-      dispatch-app-client-id: ${{ secrets.DISPATCH_APP_CLIENT_ID }}
-      dispatch-app-private-key: ${{ secrets.DISPATCH_APP_PRIVATE_KEY }}
+      # The App the bots use; it has Actions permission on the runner repository.
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

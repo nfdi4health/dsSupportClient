@@ -12,10 +12,10 @@ permissions: {}
 jobs:
   wait:
     permissions: {}
-    # The implementer's branch of datashield-workflows until it is merged; then @main.
-    uses: nfdi4health/datashield-workflows/.github/workflows/implementer-timer.yml@agent-suggest/feat/implementer
+    uses: nfdi4health/datashield-workflows/.github/workflows/implementer-timer.yml@main
     with:
       runner-repository: FlorianSchw/datashield-agent-runner
     secrets:
-      dispatch-app-client-id: ${{ secrets.DISPATCH_APP_CLIENT_ID }}
-      dispatch-app-private-key: ${{ secrets.DISPATCH_APP_PRIVATE_KEY }}
+      # The App the bots use; it has Actions permission on the runner repository.
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
