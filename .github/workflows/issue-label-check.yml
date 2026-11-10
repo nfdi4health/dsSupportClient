@@ -11,3 +11,9 @@ jobs:
     uses: nfdi4health/datashield-workflows/.github/workflows/issue-label-check.yml@main
     with:
       allowed-logins: FlorianSchw
+      # An approval that stays starts the implementer.
+      runner-repository: FlorianSchw/datashield-agent-runner
+    secrets:
+      # The App the bots use; it has Actions permission on the runner repository.
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}

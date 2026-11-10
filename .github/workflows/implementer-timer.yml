@@ -1,0 +1,21 @@
+name: Implementer Timer
+
+# The implementer sends this event when it stopped at the subscription's
+# 5-hour limit while working on an issue here. This waits until the limit
+# resets (free: this repository is public) and starts the runner again.
+on:
+  repository_dispatch:
+    types: [implementer-timer]
+
+permissions: {}
+
+jobs:
+  wait:
+    permissions: {}
+    uses: nfdi4health/datashield-workflows/.github/workflows/implementer-timer.yml@main
+    with:
+      runner-repository: FlorianSchw/datashield-agent-runner
+    secrets:
+      # The App the bots use; it has Actions permission on the runner repository.
+      app-client-id: ${{ secrets.APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
