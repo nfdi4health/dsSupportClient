@@ -12,3 +12,27 @@ test_that("ds.histAllVars errors on a list of non-DSConnection elements without 
   expect_false(dir.exists("histograms"))
   expect_equal(normalizePath(getwd()), normalizePath(tempdir()))
 })
+
+test_that("ds.histAllVars writes per-study PNGs under path, passes method to both calls and keeps the working directory", {
+  skip_if_not(exists("conns"))
+  out <- paste0("histtest_", basename(tempfile()))
+  on.exit(unlink(here::here(out), recursive = TRUE), add = TRUE)
+  wd <- getwd()
+  methods_used <- character()
+  fake_hist <- function(x, ..., method = "none") {
+    methods_used <<- c(methods_used, method)
+    invisible(NULL)
+  }
+  testthat::local_mocked_bindings(ds.histogram = fake_hist, .package = "dsBaseClient")
+  expect_output(ds.histAllVars(datasources = conns["Server1"], method = "probabilistic", path = out))
+  expect_true(dir.exists(here::here(out, "Server1")))
+  expect_true(length(methods_used) > 0)
+  expect_true(all(methods_used == "probabilistic"))
+  expect_equal(getwd(), wd)
+})
+
+test_that("ds.histAllVars leaves the working directory unchanged after an error", {
+  wd <- getwd()
+  expect_error(ds.histAllVars(datasources = list(1)))
+  expect_equal(getwd(), wd)
+})
