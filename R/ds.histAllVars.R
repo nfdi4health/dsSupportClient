@@ -4,7 +4,7 @@
 #' @param datasources A list of DSConnection-class objects as created by DSI::datashield.login(); if NULL (the default), the function looks for existing connections via DSI::datashield.connections_find().
 #' @param method A string naming the histogram-building method passed to dsBaseClient::ds.histogram in both calls, the disclosure-controlled summary and the plot rendered to PNG (e.g. "deterministic" or "probabilistic"); defaults to "deterministic".
 #' @param path A string giving the output directory, relative to the project root as found by \code{here::here()}; defaults to "histograms". It is created if it does not exist.
-#' @return Called for its side effects: it creates the directory \code{path} with a subdirectory for each study, containing PNG histograms of all suitable variables. The summary object of each histogram is printed.
+#' @return Called for its side effects (returns NULL invisibly): it creates the directory path with one subdirectory per study, containing PNG histograms of suitable numeric/integer variables, and prints the disclosure-controlled summary object returned by ds.histogram for each such variable as a side effect of the loop.
 #' @import DSI
 #' @import dsBaseClient
 #' @import methods
