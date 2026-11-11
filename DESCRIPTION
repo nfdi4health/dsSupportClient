@@ -19,8 +19,6 @@ Imports:
   tibble,
   purrr,
   here,
-  remotes,
-  devtools,
   methods
 Suggests:
     rmarkdown,
