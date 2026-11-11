@@ -9,6 +9,32 @@
 #' @import dsBaseClient
 #' @import methods
 #' @importFrom grDevices dev.off png
+#' @examples
+#' \dontrun{
+#' require('DSI')
+#' require('DSOpal')
+#' require('dsSupportClient')
+#' 
+#' builder <- DSI::newDSLoginBuilder()
+#' builder$append(server = "study1",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM1", driver = "OpalDriver")
+#' builder$append(server = "study2",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM2", driver = "OpalDriver")
+#' builder$append(server = "study3",
+#'                url = "https://opal-demo.obiba.org/",
+#'                user = "dsuser", password = "P@ssw0rd",
+#'                table = "CNSIM.CNSIM3", driver = "OpalDriver")
+#' logindata <- builder$build()
+#' connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+#' 
+#' ds.histAllVars(datasources = connections, method = "deterministic", path = "histograms")
+#' 
+#' datashield.logout(connections)
+#' }
 #' @export
 
 ds.histAllVars<- function(datasources = NULL, method = "deterministic", path = "histograms") {
