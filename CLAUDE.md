@@ -85,20 +85,9 @@ it has intentionally been the crash-test dummy for every bug found so far.
 
 Not before the user and the co-author have gone through everything.
 
-1. **First real release: 2.0.0.** Breaking changes already reached `main`,
-   but no commit since the `1.0.0` tag is marked as breaking, so a release
-   from today's state would be 1.1.0. Plan: the PR into `dev` that removes
-   `dry-run: true` from `.github/workflows/release-publish.yml` carries
-   the marker (`ci!: switch on real releases` with a `BREAKING CHANGE:`
-   footer listing what changed for users: renamed arguments, changed or
-   removed functions — drafted from the difference between `1.0.0` and
-   `dev`, checked by the user). The footer goes into the release notes
-   and `NEWS.md`. The `dev` → `main` merge must keep the commit message
-   (a normal merge, not a squash with another title).
-2. **Versions on GitHub first, CRAN later:** real releases (tags, GitHub
-   releases, `NEWS.md`) from 2.0.0; the first CRAN submission maybe only
-   at a later 2.0.x (e.g. 2.0.7), once things have settled.
-3. **Before the first CRAN submission:**
+1. **Everything in order first, before the first real release** (user,
+   2026-11-12) — the CRAN preparation too, even if the first submission
+   comes later:
    - DESCRIPTION and code ready for CRAN (#91: maintainer Florian Schwarz,
      title, description, Remotes, dsBase in Suggests);
    - `r-cmd-check.yml` with `as-cran: true` on ubuntu, macOS and windows
@@ -108,6 +97,19 @@ Not before the user and the co-author have gone through everything.
      `cran-wait-check.yml` on PRs into `main` (60 days, `cran-hotfix`
      label to override) and `cran-submit.yml` after the release, first as
      `dry-run`; the maintainer confirms CRAN's email each time.
+2. **Then the first real release: 2.0.0.** Breaking changes already reached `main`,
+   but no commit since the `1.0.0` tag is marked as breaking, so a release
+   from today's state would be 1.1.0. Plan: the PR into `dev` that removes
+   `dry-run: true` from `.github/workflows/release-publish.yml` carries
+   the marker (`ci!: switch on real releases` with a `BREAKING CHANGE:`
+   footer listing what changed for users: renamed arguments, changed or
+   removed functions — drafted from the difference between `1.0.0` and
+   `dev`, checked by the user). The footer goes into the release notes
+   and `NEWS.md`. The `dev` → `main` merge must keep the commit message
+   (a normal merge, not a squash with another title).
+3. **Versions on GitHub first, CRAN submissions later:** real releases (tags, GitHub
+   releases, `NEWS.md`) from 2.0.0; the first CRAN submission maybe only
+   at a later 2.0.x (e.g. 2.0.7), once things have settled.
 4. **The old `1.0.0` tag stays** (a 2023 pre-release by Sofia Siampani;
    the tag was later moved to a 2026 commit). Deleting a published tag
    breaks whatever refers to it; semantic-release just counts from it.
