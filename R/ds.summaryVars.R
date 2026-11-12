@@ -2,9 +2,9 @@
 #' @description Computes summary statistics (via ds.summary and ds.var) for all numeric or integer variables of a server-side data.frame, separately for each connected study, and optionally saves each study's table to a CSV file.
 #' @details ds.summaryVars inspects, for each connected study, the column names of the server-side data.frame named by df (via ds.colnames) and the class of each variable (via dsBaseClient::ds.class). For variables of class 'numeric' or 'integer' with at least one non-missing value, it calls dsBaseClient::ds.summary and dsBaseClient::ds.var to build a summary table augmented with the standard deviation, per study.
 #' @param df A character string giving the name of a data.frame object on the server-side (as assigned via datashield.assign); defaults to "D".
-#' @param datasources A list of \code{\link{DSConnection-class}} objects obtained after login.
+#' @param datasources A list of \code{\link[DSI:DSConnection-class]{DSConnection-class}} objects obtained after login.
 #' If the \code{datasources} argument is not specified the default set of connections will be
-#' used: see \code{\link{datashield.connections_default}}.
+#' used: see \code{\link[DSI]{datashield.connections_default}}.
 #' @param save Logical; if TRUE, the per-study summary table is additionally written to a CSV file named '<study>_summary.csv' in the current working directory via utils::write.csv. Default is FALSE.
 #' @return a list with the summary of each variable
 #' @author Sofia Siampani (Max-Delbrueck-Center, Berlin), Florian Schwarz (German Institute of Human Nutrition, Potsdam-Rehbruecke)

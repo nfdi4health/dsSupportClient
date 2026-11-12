@@ -18,11 +18,38 @@ ds.histAllVars(
 \item{path}{A string giving the output directory, relative to the project root as found by \code{here::here()}; defaults to "histograms". It is created if it does not exist.}
 }
 \value{
-Called for its side effects: it creates the directory \code{path} with a subdirectory for each study, containing PNG histograms of all suitable variables. The summary object of each histogram is printed.
+Called for its side effects (returns NULL invisibly): it creates the directory path with one subdirectory per study, containing PNG histograms of suitable numeric/integer variables, and prints the disclosure-controlled summary object returned by ds.histogram for each such variable as a side effect of the loop.
 }
 \description{
 Generates and saves histogram plots for all numeric or integer variables across one or more DataSHIELD-connected studies.
 }
 \details{
 For each study connection, this retrieves variable names via dsBaseClient::ds.colnames, checks each variable's type and missingness with ds.class, ds.numNA, ds.length and ds.mean, and for suitable numeric/integer variables builds a histogram. Server function called: ds.histogram, called first to obtain and print a disclosure-controlled summary object, then called again (without capturing its result) purely to render a plot that is captured into a PNG file. Both calls use the same \code{method}. Output goes to \code{<path>/<studyName>/<studyName>_<variable>.png}, with one subdirectory per study named after each study's connection name. \code{path} is resolved with \code{here::here()}, i.e. relative to the project root, not to the current working directory. The working directory is never changed.
+}
+\examples{
+\dontrun{
+require('DSI')
+require('DSOpal')
+require('dsSupportClient')
+
+builder <- DSI::newDSLoginBuilder()
+builder$append(server = "study1",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
+               table = "CNSIM.CNSIM1", driver = "OpalDriver")
+builder$append(server = "study2",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
+               table = "CNSIM.CNSIM2", driver = "OpalDriver")
+builder$append(server = "study3",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
+               table = "CNSIM.CNSIM3", driver = "OpalDriver")
+logindata <- builder$build()
+connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
+
+ds.histAllVars(datasources = connections, method = "deterministic", path = "histograms")
+
+datashield.logout(connections)
+}
 }

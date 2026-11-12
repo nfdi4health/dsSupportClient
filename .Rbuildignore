@@ -2,3 +2,8 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^\.github$
+^CLAUDE\.md$
+^LICENSE\.md$
+^package\.json$
+^package-lock\.json$
+^cran-comments\.md$
