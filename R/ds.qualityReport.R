@@ -1,6 +1,6 @@
 #' @title Data quality report for all connected studies
 #' @description Runs the usual data quality checks on a server-side data.frame for every connected study and writes them to one HTML report with a section per study.
-#' @details Each study section starts with an overview (rows, variables, share of missing cells) and then shows the variable classes and the number of missing values, the numeric summaries, the frequency tables of the factor variables and a histogram of every numeric variable. The report is built only from what existing functions return: dsBaseClient::ds.dim (server function dimDS), ds.wrapper with ds.class and ds.numNA, ds.summaryVars, ds.tableBatch (server function ds.table is run with useNA = "always") and dsBaseClient::ds.histogram. The per-study parts are requested one study at a time, so that a disclosure failure in one study does not hide the results of the others. No new server function is used. A variable with only missing values in a study is listed as entirely missing and is left out of the summaries, tables and histograms. A frequency table or histogram that the server refuses to return because of disclosure control (e.g. a cell count below nfilter.tab) is labelled as suppressed in the report, never shown as 0. ds.histogram is tried with 10, 5 and then 3 breaks, because the server refuses too many breaks for few observations; bins the server marks as invalid come back with a count of 0 and are flagged in a note under the histogram. The histograms are embedded as PNG images, so the report is a single self-contained file.
+#' @details Each study section starts with an overview (rows, variables, share of missing cells) and then shows the variable classes and the number of missing values, the numeric summaries, the frequency tables of the factor variables and a histogram of every numeric variable. The report is built only from what existing functions return: dsBaseClient::ds.dim (server function dimDS), ds.wrapper with ds.class and ds.numNA, ds.summaryVars, ds.tableBatch (server function ds.table is run with useNA = "always") and dsBaseClient::ds.histogram. The per-study parts are requested one study at a time, so that a disclosure failure in one study does not hide the results of the others. No new server function is used. A variable with only missing values in a study is listed as entirely missing and is left out of the summaries, tables and histograms. A frequency table or histogram that the server refuses to return because of disclosure control (e.g. a cell count below nfilter.tab) is labelled as suppressed in the report, never shown as 0. ds.histogram is tried with 10, 5 and then 3 breaks, because the server refuses too many breaks for few observations; if the server marks any bin as invalid (it comes back with a count of 0), the histogram is redrawn without a bar for those bins, which are labelled "suppressed", so a suppressed bin is never drawn as 0. The histograms are embedded as PNG images, so the report is a single self-contained file.
 #' @param df A character string giving the name of the server-side data.frame to report on (must exist in every study); defaults to "D".
 #' @param datasources A list of DSConnection-class objects obtained after login. If NULL, the open connections are found with DSI::datashield.connections_find().
 #' @param file A character string giving the path of the HTML report to write; defaults to "quality_report.html".
@@ -49,9 +49,7 @@ ds.qualityReport <- function(df = "D", datasources = NULL, file = "quality_repor
   }
 
   # fails here if df does not exist
-  dims <- lapply(seq_along(datasources), function(p) {
-    dsBaseClient::ds.dim(df, type = "split", datasources = datasources[p])[[1]]
-  })
+  dims <- dsBaseClient::ds.dim(df, type = "split", datasources = datasources)
   classes <- ds.wrapper(df = df, ds_function = "ds.class", datasources = datasources)
   numNA <- ds.wrapper(df = df, ds_function = "ds.numNA", datasources = datasources)
   summaries <- ds.summaryVars(df = df, datasources = datasources)
@@ -83,12 +81,16 @@ quality_report_section <- function(df, study, dim, classes, numNA, summaries) {
   vars <- rownames(classes)
   class_study <- classes[[paste0(name, ".class")]]
   na_study <- numNA[vars, paste0(name, ".numNA")]
-  all_missing <- !is.na(na_study) & na_study == dim[1]
+  all_missing <- dim[1] > 0 & !is.na(na_study) & na_study == dim[1]
 
   overview <- data.frame(
     Rows = dim[1],
     Variables = dim[2],
-    "Share missing" = sprintf("%.1f %%", 100 * sum(na_study, na.rm = TRUE) / prod(dim)),
+    "Share missing" = if (prod(dim) > 0) {
+      sprintf("%.1f %%", 100 * sum(na_study, na.rm = TRUE) / prod(dim))
+    } else {
+      "not available (no data)"
+    },
     check.names = FALSE
   )
 
@@ -142,8 +144,8 @@ html_table <- function(x, row_names = TRUE) {
 
 # HTML <img> with an embedded PNG histogram, or a suppressed label. The server
 # refuses a histogram with too many breaks for few observations, so fewer
-# breaks are tried. Cells below the threshold are reported by ds.histogram as
-# "invalid cells" and come back with a count of 0; this is flagged in a note.
+# breaks are tried. Bins below the threshold are reported by ds.histogram as
+# "invalid cells" with a count of 0; then no plot is shown, only the label.
 histogram_html <- function(variable, study) {
 
   png_file <- tempfile(fileext = ".png")
@@ -173,11 +175,18 @@ histogram_html <- function(variable, study) {
     return("<p class=\"flag\">suppressed</p>")
   }
 
-  note <- if (length(invalid) > 0) {
-    paste0(
-      "<p class=\"flag\">Some bins are suppressed (", htmltools::htmlEscape(paste(invalid, collapse = "; ")),
-      "): their counts are not shown, a bar of height 0 means suppressed.</p>"
-    )
+  if (length(invalid) > 0) {
+    # ds.histogram gives suppressed bins a count of 0: redraw without bars for
+    # the zero bins and mark them, so that a suppressed bin is not shown as 0
+    grDevices::png(png_file)
+    suppressed <- histogram$counts == 0
+    graphics::plot(range(histogram$breaks), c(0, max(histogram$counts, 1) * 1.1), type = "n",
+                   xlab = "", ylab = "Frequency", main = "")
+    graphics::rect(histogram$breaks[-length(histogram$breaks)][!suppressed], 0,
+                   histogram$breaks[-1][!suppressed], histogram$counts[!suppressed])
+    graphics::text(histogram$mids[suppressed], max(histogram$counts, 1) * 0.05, "suppressed",
+                   srt = 90, adj = c(0, 0.5), col = "red")
+    grDevices::dev.off()
   }
-  paste0("<img alt=\"histogram\" src=\"data:image/png;base64,", base64enc::base64encode(png_file), "\">", note)
+  paste0("<img alt=\"histogram\" src=\"data:image/png;base64,", base64enc::base64encode(png_file), "\">")
 }
