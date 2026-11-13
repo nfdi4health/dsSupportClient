@@ -19,6 +19,8 @@ Imports:
   tibble,
   purrr,
   here,
+  htmltools,
+  base64enc,
   methods
 Suggests:
     rmarkdown,
