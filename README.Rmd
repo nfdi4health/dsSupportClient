@@ -34,6 +34,24 @@ And then install this Github repository
 remotes::install_github("sofiasiamp/dsSupportClient")
 ```
 
+
+## Connecting to the servers
+
+`dsSupportClient` works with the connections you pass to its functions, whatever the server type. Logging in needs the DataSHIELD driver for your servers, which you install and load yourself, in your login script:
+
+| Servers | Driver package | In the login |
+|---|---|---|
+| Opal | `DSOpal` | `driver = "OpalDriver"` |
+| Armadillo | `DSMolgenisArmadillo` | `driver = "ArmadilloDriver"` |
+| Local test servers | `DSLite` | `driver = "DSLiteDriver"` |
+
+``` r
+install.packages("DSOpal")
+library(DSOpal)
+```
+
+The drivers are optional dependencies (`Suggests`), so installing `dsSupportClient` doesn't install them.
+
 ## Example
 
 This is a basic example on how to use it:
