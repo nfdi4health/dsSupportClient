@@ -2,72 +2,55 @@
 % Please edit documentation in R/ds.wrapper.R
 \name{ds.wrapper}
 \alias{ds.wrapper}
-\title{Wrapper function for DataSHIELD analysts}
+\title{Summarise a variable-level DataSHIELD function across variables}
 \usage{
 ds.wrapper(df = "D", ds_function = NULL, datasources = NULL, save = FALSE)
 }
 \arguments{
-\item{df}{A data.frame on the server-side. Default is "D".}
+\item{df}{String naming the server-side data.frame to summarise (must exist on each connected server); defaults to "D".}
 
-\item{ds_function}{The aggregate DataSHIELD function you want to run to receive information (e.g. ds.class, ds.numNA).}
+\item{ds_function}{String naming the DataSHIELD client aggregate function to apply to each variable of df (e.g. "ds.class", "ds.numNA"); must be a single character string that resolves to an existing function via exists()/get(), and its second dot-separated token (e.g. "class") is used to build result column names and the output CSV file name.}
 
-\item{datasources}{A list of \code{\link{DSConnection-class}} objects obtained after login.
-If the \code{datasources} argument is not specified the default set of connections will be
-used: see \code{\link{datashield.connections_default}}.}
+\item{datasources}{A list of DSConnection-class objects obtained after login. If not specified, the default set of connections is used, as returned by datashield.connections_find.}
 
-\item{save}{If TRUE, the output is saved in the working directory as a csv file. Default is FALSE}
+\item{save}{Logical; if TRUE the resulting summary table is written to a CSV file in the current working directory. Defaults to FALSE.}
 }
 \value{
-A table with the output of the function. If more than one study is connected, they are joined in one table.
+Returns a data.frame to the caller, with one row per variable in df (row names set to variable names) and one column per connected study (named "<study name>.<function suffix>"), holding the per-variable, per-study output of ds_function; if save = TRUE this same table is also written as a CSV file named "<ds_function>_overview.csv" in the current working directory as a side effect. Because the table only assembles values already returned by the (disclosure-controlled) ds_function calls, ds.wrapper itself performs no additional disclosure filtering.
 }
 \description{
-The function summarises the outcome of variable-level aggregate DataSHIELD functions.
+Runs a variable-level DataSHIELD aggregate function (e.g. ds.class, ds.numNA) over every column of a server-side data.frame and collates the results into one table.
 }
 \details{
-ds.wrapper wraps around DataSHIELD functions and creates summaries for all variables in a data.frame, providing an improved overview for the DataSHIELD analyst.
+The function retrieves the column names of the server-side data.frame via dsBaseClient::ds.colnames for each connected study, then calls the supplied ds_function once per variable per study, building one data.frame of results per study. These per-study tables are then combined by row name using dplyr::full_join inside purrr::reduce. There is no single fixed server function called: ds.wrapper dispatches whichever DataSHIELD client aggregate function is passed via ds_function, and that function issues its own server-side call(s).
 }
 \examples{
 \dontrun{
-
-# Version 1.0
-# Connecting to Opal Servers
-
-# loading necessary packages
-require("DSI")
-require("DSOpal")
-require("dsBaseClient")
-require("dsSupportClient")
+require('DSI')
+require('DSOpal')
+require('dsSupportClient')
 
 builder <- DSI::newDSLoginBuilder()
 builder$append(server = "study1",
-               url = "http://192.168.56.100:8080/",
-               user = "administrator", password = "datashield_test&",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
                table = "CNSIM.CNSIM1", driver = "OpalDriver")
 builder$append(server = "study2",
-               url = "http://192.168.56.100:8080/",
-               user = "administrator", password = "datashield_test&",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
                table = "CNSIM.CNSIM2", driver = "OpalDriver")
 builder$append(server = "study3",
-               url = "http://192.168.56.100:8080/",
-               user = "administrator", password = "datashield_test&",
+               url = "https://opal-demo.obiba.org/",
+               user = "dsuser", password = "P@ssw0rd",
                table = "CNSIM.CNSIM3", driver = "OpalDriver")
-
 logindata <- builder$build()
-
-# Log onto the remote Opal training servers
 connections <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "D")
 
-# Retrieving information on variable classes in the specified data.frame
 ds.wrapper(df = "D", ds_function = ds.class)
 
-
-# Retrieving information on how many NAs are present in each variable in the specified data.frame
 ds.wrapper(df = "D", ds_function = ds.numNA)
 
-
-# Clear the Datashield R sessions and logout
 datashield.logout(connections)
-
 }
 }
 \author{

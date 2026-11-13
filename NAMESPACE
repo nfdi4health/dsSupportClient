@@ -10,6 +10,8 @@ import(dplyr)
 import(dsBaseClient)
 import(methods)
 import(purrr)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,png)
+importFrom(grDevices,
+  dev.off,
+  png
+)
 importFrom(utils,write.csv)

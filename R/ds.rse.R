@@ -141,14 +141,14 @@ ds.rse <- function(formula, datasources, type = "split", data) {
 
       # Obtain the new 95% confidence intervals
       beta <- unlist(IPD_list)
-      robust_LCI <- beta - (robust_SE*qnorm(0.975))
-      robust_UCI <- beta + (robust_SE*qnorm(0.975))
+      robust_LCI <- beta - (robust_SE*stats::qnorm(0.975))
+      robust_UCI <- beta + (robust_SE*stats::qnorm(0.975))
 
       # Obtain test statistic z (= beta/SE)
       robust_z <- beta/robust_SE
 
       # Obtain new p value P = exp(−0.717×z − 0.416×z2)
-      robust_p <- 2*pnorm(q=abs(robust_z),lower.tail=FALSE)
+      robust_p <- 2*stats::pnorm(q=abs(robust_z),lower.tail=FALSE)
 
       # Put it all together (dataframe with all measures, for all variables and the intercept)
 
@@ -287,14 +287,14 @@ ds.rse <- function(formula, datasources, type = "split", data) {
 
     # Obtain the new 95% confidence intervals
     beta <- mod$coefficients[,1]
-    robust_LCI <- beta - (robust_SE*qnorm(0.975))
-    robust_UCI <- beta + (robust_SE*qnorm(0.975))
+    robust_LCI <- beta - (robust_SE*stats::qnorm(0.975))
+    robust_UCI <- beta + (robust_SE*stats::qnorm(0.975))
 
     # Obtain test statistic z (= beta/SE)
     robust_z <- beta/robust_SE
 
     # Obtain new p value P = exp(−0.717×z − 0.416×z2)
-    robust_p <- 2*pnorm(q=abs(robust_z),lower.tail=FALSE)
+    robust_p <- 2*stats::pnorm(q=abs(robust_z),lower.tail=FALSE)
 
     robust_table <- data.frame(unlist(beta),unlist(robust_SE),unlist(robust_z),unlist(robust_p),unlist(robust_LCI),unlist(robust_UCI), rep(mod$Nvalid, numVar))
 

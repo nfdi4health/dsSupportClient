@@ -2,24 +2,25 @@
 % Please edit documentation in R/ds.rse.R
 \name{ds.rse}
 \alias{ds.rse}
-\title{Robust Standard Errors HC1}
+\title{Compute HC1 robust standard errors for a GLM fit}
 \usage{
 ds.rse(formula, datasources, type = "split", data)
 }
 \arguments{
-\item{formula}{The formula to perform RSE e.g. "Age ~ Sex + Weight"}
+\item{formula}{A character string giving the model formula, e.g. "Age ~ Sex + Weight", referring to variables of the server-side data frame named in data.}
 
-\item{datasources}{A list of \code{\link{DSConnection-class}} objects obtained after login.
-If the \code{datasources} argument is not specified the default set of connections will be
-used: see \code{\link{datashield.connections_default}}.}
+\item{datasources}{A list of DSConnection-class objects obtained after login, as produced by DSI::datashield.login; this argument is required and has no default.}
 
-\item{type}{"split" or "combine"}
+\item{type}{A character string, either "split" (the default) to compute robust standard errors separately for each study, or "combine" to pool all studies into one estimate; any other value causes the function to return NULL invisibly with no computation performed.}
 
-\item{data}{A data.frame on the server-side}
+\item{data}{A character string giving the name of a data frame on the server-side (as assigned via datashield.assign) containing the variables referenced in formula.}
 }
 \value{
 robust standard errors of the formula
 }
 \description{
-Robust Standard Errors HC1
+Fits a Gaussian GLM on server-side data via ds.glm and computes heteroscedasticity-robust (HC1) standard errors, confidence intervals, z-statistics and p-values, either separately per study or pooled across all studies.
+}
+\details{
+For type = "split" the function calls ds.glm once per study and reconstructs study-specific design matrices and residuals using a sequence of dsBase/dsSupport assign and aggregate calls (ds.cbind, ds.completeCases, ds.make, ds.matrixMult, ds.matrixInvert, ds.matrixDiag, ds.meanSdGp, among others) to derive HC1 sandwich variance estimates locally from the returned summaries. For type = "combine" it instead fits a single pooled ds.glm model and builds the cross-product matrices XTX and XTOmegaX across all datasources before combining them in R with solve() to obtain the pooled HC1 robust variance-covariance matrix. No single server-side aggregate/assign function is dispatched for the robust standard error calculation itself; this client function orchestrates many existing dsBase/dsSupport server-side calls and finishes the sandwich-estimator arithmetic locally.
 }
