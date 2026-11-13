@@ -19,10 +19,16 @@ Imports:
   tibble,
   purrr,
   here,
+  htmltools,
+  base64enc,
+  grDevices,
+  graphics,
+  utils,
   methods
 Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
+    withr,
     DSLite,
     DSOpal
 Remotes: datashield/dsBaseClient, datashield/dsBase
