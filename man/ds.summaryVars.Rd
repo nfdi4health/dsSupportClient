@@ -2,30 +2,27 @@
 % Please edit documentation in R/ds.summaryVars.R
 \name{ds.summaryVars}
 \alias{ds.summaryVars}
-\title{Executes ds.summary function for variables in a data.frame}
+\title{Builds a per-study summary table for numeric variables}
 \usage{
 ds.summaryVars(df = "D", datasources = NULL, save = FALSE)
 }
 \arguments{
-\item{df}{A data.frame on the server-side.}
+\item{df}{A character string giving the name of a data.frame object on the server-side (as assigned via datashield.assign); defaults to "D".}
 
-\item{datasources}{A list of \code{\link{DSConnection-class}} objects obtained after login.
+\item{datasources}{A list of \code{\link[DSI:DSConnection-class]{DSConnection-class}} objects obtained after login.
 If the \code{datasources} argument is not specified the default set of connections will be
-used: see \code{\link{datashield.connections_default}}.}
+used: see \code{\link[DSI]{datashield.connections_default}}.}
 
-\item{save}{if TRUE, the output is saved in the working directory as a csv fil. Default is FALSE.
-It runs the datashield function ds.summary()and calculates the standard deviation in all numeric and integer variables of each OpalConnection}
+\item{save}{Logical; if TRUE, the per-study summary table is additionally written to a CSV file named '<study>_summary.csv' in the current working directory via utils::write.csv. Default is FALSE.}
 }
 \value{
 a list with the summary of each variable
 }
 \description{
-The function executes the ds.summary function for all numeric or integer variables of a data.frame.
+Computes summary statistics (via ds.summary and ds.var) for all numeric or integer variables of a server-side data.frame, separately for each connected study, and optionally saves each study's table to a CSV file.
 }
 \details{
-ds.summaryVars analyses the classes of variables of a server-side data.frame and executes the ds.summary
-function for all variables which are of type 'numeric' or 'integer'. Additionally, it also provides the standard deviation
-for those variables.
+ds.summaryVars inspects, for each connected study, the column names of the server-side data.frame named by df (via ds.colnames) and the class of each variable (via dsBaseClient::ds.class). For variables of class 'numeric' or 'integer' with at least one non-missing value, it calls dsBaseClient::ds.summary and dsBaseClient::ds.var to build a summary table augmented with the standard deviation, per study.
 }
 \examples{
 \dontrun{
