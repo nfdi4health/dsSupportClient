@@ -1,6 +1,6 @@
 #' @title Data quality report for all connected studies
 #' @description Runs the usual data quality checks on a server-side data.frame for every connected study and writes them to one HTML report with a section per study.
-#' @details Each study section starts with an overview (rows, variables, share of missing cells) and then shows the variable classes and the number of missing values, the numeric summaries, the frequency tables of the factor variables and a histogram of every numeric variable. The report is built only from what existing functions return: dsBaseClient::ds.dim (server function dimDS), ds.wrapper with ds.class and ds.numNA, ds.summaryVars, ds.tableBatch (server function ds.table is run with useNA = "always") and dsBaseClient::ds.histogram. The per-study parts are requested one study at a time, so that a disclosure failure in one study does not hide the results of the others. No new server function is used. A variable with only missing values in a study is listed as entirely missing and is left out of the summaries, tables and histograms. A frequency table or histogram that the server refuses to return because of disclosure control (e.g. a cell count below nfilter.tab) is labelled as suppressed in the report, never shown as 0. ds.histogram is tried with 10, 5 and then 3 breaks, because the server refuses too many breaks for few observations; if the server marks any bin as invalid (it comes back with a count of 0), the histogram is redrawn without a bar for those bins, which are labelled "suppressed", so a suppressed bin is never drawn as 0. The histograms are embedded as PNG images, so the report is a single self-contained file.
+#' @details Each study section starts with an overview (rows, variables, share of missing cells) and then shows the variable classes and the number of missing values, the numeric summaries, the frequency tables of the factor variables and a histogram of every numeric variable. The report is built only from what existing functions return: dsBaseClient::ds.dim (server function dimDS), ds.wrapper with ds.class and ds.numNA, ds.summaryVars, ds.tableBatch (server function ds.table is run with useNA = "always") and dsBaseClient::ds.histogram. The per-study parts are requested one study at a time, so that a disclosure failure in one study does not hide the results of the others. No new server function is used. A variable with only missing values in a study is listed as entirely missing and is left out of the summaries, tables and histograms. A frequency table or histogram that the server refuses to return because of disclosure control (e.g. a cell count below nfilter.tab) is labelled as suppressed in the report, never shown as 0. ds.histogram is tried with 10, 5 and then 3 breaks, because the server refuses too many breaks for few observations; if ds.histogram warns about invalid cells (the server returns those bins with a count of 0), the histogram is redrawn without a bar for the bins with a count of 0, which are labelled "empty or suppressed" (a suppressed bin cannot be told from a truly empty one), so a suppressed bin is never drawn as 0. The histograms are embedded as PNG images, so the report is a single self-contained file.
 #' @param df A character string giving the name of the server-side data.frame to report on (must exist in every study); defaults to "D".
 #' @param datasources A list of DSConnection-class objects obtained after login. If NULL, the open connections are found with DSI::datashield.connections_find().
 #' @param file A character string giving the path of the HTML report to write; defaults to "quality_report.html".
@@ -142,50 +142,69 @@ html_table <- function(x, row_names = TRUE) {
   paste0("<table><tr>", if (row_names) "<th></th>", header, "</tr>", paste(rows, collapse = ""), "</table>")
 }
 
+# Number of invalid (suppressed) cells reported by ds.histogram warnings of the
+# form "<study>: <n> invalid cells"; warnings of any other kind are ignored
+invalid_cells <- function(messages) {
+
+  found <- regmatches(messages, regexec("([0-9]+) invalid cells", messages))
+  counts <- vapply(found, function(m) if (length(m) == 2) as.numeric(m[2]) else 0, numeric(1))
+  sum(counts)
+}
+
+# Draws a histogram into the current device. If `invalid` > 0 the server has set
+# the count of its suppressed bins to 0, which cannot be told apart from a truly
+# empty bin: bins with count 0 get no bar but the label "empty or suppressed".
+# Returns the logical vector of bins left without a bar.
+draw_histogram <- function(counts, breaks, mids, invalid = 0) {
+
+  zero <- if (invalid > 0) counts == 0 else rep(FALSE, length(counts))
+  top <- max(counts, 1) * 1.1
+  graphics::plot(range(breaks), c(0, top), type = "n", xlab = "", ylab = "Frequency", main = "")
+  graphics::rect(breaks[-length(breaks)][!zero], 0, breaks[-1][!zero], counts[!zero])
+  if (any(zero)) {
+    graphics::text(mids[zero], top * 0.05, "empty or suppressed", srt = 90, adj = c(0, 0.5), col = "red")
+  }
+  invisible(zero)
+}
+
 # HTML <img> with an embedded PNG histogram, or a suppressed label. The server
 # refuses a histogram with too many breaks for few observations, so fewer
 # breaks are tried. Bins below the threshold are reported by ds.histogram as
-# "invalid cells" with a count of 0; then no plot is shown, only the label.
+# "invalid cells" with a count of 0; then the plot is redrawn with those bins
+# marked instead of drawn as 0.
 histogram_html <- function(variable, study) {
 
   png_file <- tempfile(fileext = ".png")
   on.exit(unlink(png_file))
-  grDevices::png(png_file)
 
   histogram <- NULL
   for (breaks in c(10, 5, 3)) {
-    invalid <- character()
+    messages <- character()
+    grDevices::png(png_file)
     histogram <- tryCatch(
       withCallingHandlers(
         dsBaseClient::ds.histogram(variable, num.breaks = breaks, datasources = study),
         warning = function(w) {
-          invalid <<- c(invalid, conditionMessage(w))
+          messages <<- c(messages, conditionMessage(w))
           invokeRestart("muffleWarning")
         }
       ),
       error = function(e) NULL
     )
+    grDevices::dev.off()
     if (!is.null(histogram)) {
       break
     }
   }
-  grDevices::dev.off()
 
   if (is.null(histogram)) {
     return("<p class=\"flag\">suppressed</p>")
   }
 
-  if (length(invalid) > 0) {
-    # ds.histogram gives suppressed bins a count of 0: redraw without bars for
-    # the zero bins and mark them, so that a suppressed bin is not shown as 0
+  invalid <- invalid_cells(messages)
+  if (invalid > 0) {
     grDevices::png(png_file)
-    suppressed <- histogram$counts == 0
-    graphics::plot(range(histogram$breaks), c(0, max(histogram$counts, 1) * 1.1), type = "n",
-                   xlab = "", ylab = "Frequency", main = "")
-    graphics::rect(histogram$breaks[-length(histogram$breaks)][!suppressed], 0,
-                   histogram$breaks[-1][!suppressed], histogram$counts[!suppressed])
-    graphics::text(histogram$mids[suppressed], max(histogram$counts, 1) * 0.05, "suppressed",
-                   srt = 90, adj = c(0, 0.5), col = "red")
+    draw_histogram(histogram$counts, histogram$breaks, histogram$mids, invalid)
     grDevices::dev.off()
   }
   paste0("<img alt=\"histogram\" src=\"data:image/png;base64,", base64enc::base64encode(png_file), "\">")
