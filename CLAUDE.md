@@ -32,6 +32,13 @@ fdrl_01XXW9s2iFKveZyKKizcggit` — this repo's specific federation rule in the
 Claude Console (subject-prefix + `job_workflow_ref` claim match).
 
 ## DESIGN DECISIONS SPECIFIC TO THIS REPO'S WORKFLOW
+- **Breaking changes (user, 2026-11-16):** before any commit that marks a
+  breaking change (`type!:` or a `BREAKING CHANGE:` footer), and before any
+  change that would break callers or users without such a marker, ask the
+  user first: what breaks (inputs, arguments, file formats, behaviour), for
+  whom, and whether a non-breaking way exists (e.g. the old name kept as a
+  deprecated alias for a while). Applies from now on, not only once releases
+  exist.
 - PRs only ever land in `dev` via PR, never direct push — a deliberate
   convention so every future check (doc-assist, anything added later) has
   exactly one place to hook into. **Not yet enforced** — branch protection on
