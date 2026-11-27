@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/sofiasiamp/dsSupportClient/actions/workflows/github-actions.yml/badge.svg)](https://github.com/sofiasiamp/dsSupportClient/actions/workflows/github-actions.yml)
-[![codecov](https://codecov.io/gh/sofiasiamp/dsSupportClient/graph/badge.svg?token=JIMQK79E0H)](https://codecov.io/gh/sofiasiamp/dsSupportClient)
+[![R-CMD-check](https://github.com/nfdi4health/dsSupportClient/actions/workflows/R-CMD-Check.yml/badge.svg)](https://github.com/nfdi4health/dsSupportClient/actions/workflows/R-CMD-Check.yml)
 <!-- badges: end -->
 
 The `dsSupportClient` package offers a set of client-side functions that
@@ -27,7 +26,7 @@ library(remotes)
 And then install this Github repository
 
 ``` r
-remotes::install_github("sofiasiamp/dsSupportClient")
+remotes::install_github("nfdi4health/dsSupportClient")
 ```
 
 
