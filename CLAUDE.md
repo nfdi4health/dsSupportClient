@@ -98,7 +98,9 @@ Not before the user and the co-author have gone through everything.
    - DESCRIPTION and code ready for CRAN (#91: maintainer Florian Schwarz,
      title, description, Remotes, dsBase in Suggests);
    - `r-cmd-check.yml` with `as-cran: true` on ubuntu, macOS and windows
-     green (datashield-workflows #67);
+     green (datashield-workflows #67); set up 2026-11-27 (`cran-check.yml`
+     weekly and by hand, and the release check in `release-trigger.yml`,
+     both with R release and devel), not yet green;
    - a `cran-comments.md` (check results, "This is a new submission");
    - the CRAN workflows of datashield-workflows #68 in the release chain,
      harmless until the first submission, so they have run many times by
