@@ -13,8 +13,8 @@ permissions:
 
 jobs:
   # The release is checked the way CRAN does: as-cran, on the three
-  # systems CRAN checks on, with the released R and R-devel (as in
-  # cran-check.yml). Notes are shown, not failed.
+  # systems CRAN checks on, with the released R and R-devel (as on pull
+  # requests into dev). Notes are shown, not failed.
   check:
     if: github.head_ref == 'dev'
     uses: nfdi4health/datashield-workflows/.github/workflows/r-cmd-check.yml@main

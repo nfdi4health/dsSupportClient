@@ -4,7 +4,7 @@ name: CRAN check
 # the three systems CRAN checks on, with the released R and R-devel. Weekly
 # and by hand; the release pull request (dev -> main) runs the same matrix
 # in release-trigger.yml before it merges. Pull requests into dev keep the
-# quick ubuntu check (R-CMD-check).
+# same matrix (R-CMD-check).
 
 on:
   schedule:

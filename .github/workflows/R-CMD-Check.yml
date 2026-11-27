@@ -16,7 +16,11 @@ jobs:
     with:
       extra-apt-packages: ''
       extra-r-packages: ''
-      r-version-list: '["release"]'
+      # The way CRAN checks: as-cran on ubuntu, macOS and windows, with R
+      # release and devel (as cran-check.yml and the release check).
+      os-list: '["ubuntu-latest", "macos-latest", "windows-latest"]'
+      r-version-list: '["release", "devel"]'
+      as-cran: true
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
