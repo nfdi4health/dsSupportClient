@@ -22,6 +22,9 @@ jobs:
       os-list: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       r-version-list: '["release", "devel"]'
       as-cran: true
+      # no package binaries for R-devel on macOS: dependencies would be
+      # built from source, which fails on the runner (not on CRAN)
+      matrix-exclude: '[{"os": "macos-latest", "r-version": "devel"}]'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
